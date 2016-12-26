@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css?family=Arimo');
+
+body {
+	margin: 0;
+}
+
+#playcontainer {
+	background-color: #ececec; 
+	height: 100vh; 
+	display:flex; 
+	align-items: center;
+}
+
+#game {
+	background-color: #ffffff;
+	margin: 0 auto;
+	font-family: 'Arimo', sans-serif;
+}
