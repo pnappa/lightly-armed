@@ -1,0 +1,27 @@
+
+{
+
+	"rooms": {
+		"ROOM_CODE" : {
+			"connected": {
+				socket1: {
+					posx: num,
+					posy: num,
+					angle: double,	//radians
+					eye1timer: num,	//ms to rejuvenation
+					eye2timer: num, //ms to rejunvenation
+				}, 
+				socket2: {
+
+				}, 
+				...
+			},
+			"settings" : {
+				"required_players": num,
+				"required_kills": num,
+				"map_num": num,
+			},
+			"interval_id": ... //id of the setInterval fn for server updates
+		}
+	}
+}
