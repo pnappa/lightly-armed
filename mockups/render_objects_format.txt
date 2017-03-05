@@ -1,0 +1,47 @@
+
+
+draw format:
+
+This is currently how the renderer expects objects to appear. Perhaps i'll just break it down into layers and add labels to each individual object. This will improve performance, and mean that all that is required is sorting of one array. This is rather feasible! I'll leave it for next commit to change this however.
+
+Note that this is pretty much an OO rendering description, hopefully extendable to a library, because the world knows that we need another HTML5/JS game engine
+This is for fun, go away
+
+
+this.elements:
+{
+	"text": [
+		{
+			"zlevel": INTEGER, <= this field is mandatory
+			"value": "this is the string printed",
+			"pos": [XPOS, YPOS], <= this is the position that the text is rendered
+			"size": NUMBER, <= size in pixels of the font
+			"family": Arial <= what font the text is rendered in
+		},
+		{
+			"zlevel": INTEGER + n, <= the zlevel must be ascending
+		},
+		..
+		{
+
+		}
+	],
+	"decor": [		<= this field is for static visuals, that are not clickable
+		{
+
+		},
+		{
+
+		},
+		..
+		{
+
+		}
+	],
+	"clickable": [ 		<= objects that can be clicked, requires functor to handle
+	..
+	],
+	"animation": [		<= animated objects, must specify how to animate
+	..
+	]
+}

@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
 	});
 
 	// game controls
-	socket.on('action', (data) => {
+	socket.on('game', (data) => {
 		//TODO:
 		//MEGA TODO:
 

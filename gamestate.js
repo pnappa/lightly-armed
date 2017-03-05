@@ -13,6 +13,27 @@ class GameState {
 
 	setScreen(menu) {
 		//TODO: create the elements and save to drawable elements
+		// TODO: make sure that there is a field, "name": menu, where menu is the supplied arg
+
+		// best to read from file i'd suppose, but maybe the file is loaded into scope on init()?
+
+		//xxx: temp
+		this.screenState = menu;
+		this.elements = {
+			"text": [
+				{
+					"zlevel": 100,
+					"corn": "MAXIMUM"
+				}
+			],
+			"clickable": [
+				{
+					"zlevel": 69,
+					"corn": "MEGA"
+				}
+			]
+		}
+		
 	}
 
 	update(dt) {
@@ -38,9 +59,14 @@ class GameState {
 		if ("clickable" in this.elements) {
 			this.elements["clickable"].forEach((el) => {
 				// TODO: we should determine what the contents should be first
+				console.log("CLICKO");
+				console.log(el);
 			});
 		}
 
-		//TODO: allow gameplay mouse clicks
+		// handle the clicks designed for game playing
+		if (this.screenState["name"] === "gameplay") {
+			//TODO: handle mouse clicks with respect to where they will be placed
+		}
 	}
 }

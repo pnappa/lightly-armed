@@ -1,6 +1,6 @@
-
-var ctx = document.getElementById("game").getContext("2d");
-var gameState = new GameState();
+var cvs = document.getElementById("game");
+var ctx = cvs.getContext("2d");
+var gameState = new GameState(cvs);
 var renderer = new Renderer(ctx, gameState);
 
 function init() {
@@ -11,16 +11,16 @@ function init() {
 // game loop
 function main() {
 	let now = Date.now();
-	var dt = then-now;
+	var dt = oldTime - now;
 
-	gameState.update(delta/1000);
-	render();
+	gameState.update(dt/1000);
+	renderer.render();
 
-	then = now;
+	oldTime = now;
 
 	requestAnimationFrame(main);
 }
 
-var oldT = Date.now();
+var oldTime = Date.now();
 init();
 main();

@@ -13,66 +13,54 @@ class Renderer {
 
 	_draw(obj) {
 		//TOOD: draw the object onto the context
+		console.log(obj);
 	} 
 
 	render() {
 		//TODO: based on z-level, draw objects
 		// warning! this assumes each array in getDraw is ordered by zlevel
-		objs = gameState.getDraws();
+		let objs = gameState.getDraws();
 
 		// probe through draw objs to find next z val
 		let cIndices = [];
 		let lens = [];
-		//total indicies we can search
+		//total indices we can search
 		let sum = 0;
 		//current sum of indicies in cIndices
 		let cSum = 0;
-		for (let _dummy of objs) { 
-			cIndex.push(0); 
-			lens.push(_dummy.length);
-			sum += _dummy.length;
-		};
+		Object.values(objs).forEach(
+			(val, index) => 
+				{ 
+					cIndices.push(0); 
+					lens.push(val.length);
+					sum += val.length;
+				});
 
-		while (cSum <= sum) {
+
+		while (cSum < sum) {
 			//find the next lowest zLevel
 			let lowest = Infinity;
 			let lowInd = 0;
 			let lowObj = null;
-			let probe = 0;
-			for (let state of objs) {
-				//if we found a new minimum, set that as the best candidate for next draw
-				if (state[cIndices[probe]]["zlevel"] <= lowest) {
-					lowest = state[cIndices[probe]];
-					lowInd = probe;
-					lowObj = lowest;
-				}
-				probe++;
-			}
+			Object.values(objs).forEach(
+				(state, index) =>
+				{
+					// we've drawn all for this obj
+					if (cIndices[index] >= lens[index]) return;
+
+					//if we found a new minimum, set that as the best candidate for next draw
+					if (state[cIndices[index]]["zlevel"] <= lowest) {
+						lowObj = state[cIndices[index]];
+						lowest = lowObj["zlevel"];
+						lowInd = index;
+					}
+				});
+
 			if (!lowObj) throw "invalid render state";
 			//draw the candidate
 			cSum++;
-			_draw(lowObj);
+			this._draw(lowObj);
 			cIndices[lowInd]++;
 		}
 	}
 }
-
-// function render() {
-// 	let sc = state["screen"];
-
-// 	if (sc === "main_menu") {
-// 		ren_main();
-// 	} else if (sc === "create_room") {
-// 		create_room();
-// 	} else if (sc === "join_room") {
-// 		join_room();
-// 	} else if (sc === "waiting_room") {
-// 		waiting_room();
-// 	} else if (sc === "help_menu") {
-// 		help_menu();
-// 	} else if (sc === "ingame") {
-// 		ingame();
-// 	} else {
-// 		//???
-// 	}
-// }
