@@ -20,9 +20,11 @@ class Renderer {
 		}
 
 		if (obj.type == "text") {
-
 			this.ctx.fillStyle = obj.colour;
 			this.ctx.font = "" + obj["font-size"] + "px " + obj["font-family"];
+			if ("font-weight" in obj) { 
+				this.ctx.font = obj["font-weight"] + " " + this.ctx.font;
+			}
 			this.ctx.fillText(obj.value, obj["pos"][0], obj["pos"][1]);
 
 		} else if (obj.type == "shape") {
