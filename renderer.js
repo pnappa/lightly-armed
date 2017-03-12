@@ -13,31 +13,35 @@ class Renderer {
 	_draw(obj) {
 		//TOOD: draw the object onto the context
 		// console.log(obj);
-		if (obj.type == "text") {
-			this.ctx.save();
+		this.ctx.save();
 
-			if ("rotation" in obj) {
-				this.ctx.rotate(obj.rotation);
-			}
+		if ("rotation" in obj) {
+			this.ctx.rotate(obj.rotation);
+		}
+
+		if (obj.type == "text") {
 
 			this.ctx.fillStyle = obj.colour;
 			this.ctx.font = "" + obj["font-size"] + "px " + obj["font-family"];
 			this.ctx.fillText(obj.value, obj["pos"][0], obj["pos"][1]);
 
-			this.ctx.restore();
-
 		} else if (obj.type == "shape") {
-			this.ctx.save();
 
 			if (obj.shape === "rect") {
 				this.ctx.fillStyle = obj.colour;
 				this.ctx.fillRect(obj.pos[0], obj.pos[1], obj.width, obj.height);
 			}
 
-			this.ctx.restore();
 		} else if (obj.type == "image") {
-			console.log("image cunt");
+			if ("width" in obj) {
+				this.ctx.drawImage(obj.src, obj.pos[0], obj.pos[1], obj.width, obj.height);			
+			} else {
+				this.ctx.drawImage(obj.src, obj.pos[0], obj.pos[1]);
+			}
 		}
+
+		this.ctx.restore();
+
 	} 
 
 	render() {

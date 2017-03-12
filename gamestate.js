@@ -1,8 +1,9 @@
 
 class GameState {
-	constructor(canvas) {
+	constructor(canvas, context) {
 		//TODO:
 		this.canvas = canvas;
+		this.ctx = context;
 		this.leftOffset = canvas.offsetLeft;
 		this.topOffset = canvas.offsetTop;
 		this.screenState = null;
@@ -19,33 +20,180 @@ class GameState {
 
 		//xxx: temp
 		this.screenState = menu;
+		this.ctx.font = "36px Arimo";
 		this.elements = {
 			"static": [
 				{
-					"type": "text",
-					"zlevel": 99,
-					"font-family": "Helvetica",
-					"font-size": 36,
-					"value": "fuck",
-					"pos": [50, 50], 					
-					"colour": "#000000",
+					"zlevel": 40,
+					"type": "shape",
+					"shape": "rect",
+					"pos": [0, 0],
+					"width": 227,
+					"height": 143,
+					"colour": "white"
+				},
+				{
+					"zlevel": 100,
+					"type": "image",
+					"src": RESOURCES["title_text"],
+					"pos": [0, 0]
 				}
-
 			],
 			"clickable": [
 				{
 					"zlevel": 69,
 					"type": "shape",
 					"shape": "rect",
-					"bounds": [0, 0, 100, 100],
-					"pos": [0, 0],
+					"pos": [300, 300],
 					"width": 100,
 					"height": 100,
 					"colour": "red",
-					"onclick": console.log
+					"bounds": [300, 300, 100, 100],
+					"onclick": (obj, gs) => { if (obj["colour"] === "red") { obj["colour"] = "blue"; } else { obj["colour"] = "red"; }}
 				}
 			],
 			"animation": [
+				// LEFT COLUMN
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] -= 29*dt;
+						if (obj["pos"][1] <= -240) {
+							obj["pos"][1] = gs.canvas.height + 0;
+						}
+					},
+					"pos": [39, 300],
+					"width": 19,
+					"height": 240
+				},
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] -= 29*dt;
+						if (obj["pos"][1] <= -160) {
+							obj["pos"][1] = gs.canvas.height + 80;
+						}
+					},
+					"pos": [39, 60],
+					"width": 19,
+					"height": 160
+				},
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] -= 29*dt;
+						if (obj["pos"][1] <= -80) {
+							obj["pos"][1] = gs.canvas.height + 160;
+						}
+					},
+					"pos": [39, -50],
+					"width": 19,
+					"height": 80
+				},
+				// MIDDLE COL
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] += 37*dt;
+						if (obj["pos"][1] >=  gs.canvas.height) {
+							obj["pos"][1] = -240;
+						}
+					},
+					"pos": [79, 340],
+					"width": 19,
+					"height": 240
+				},
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] += 37*dt;
+						if (obj["pos"][1] >= gs.canvas.height+100) {
+							obj["pos"][1] = -140;
+						}
+					},
+					"pos": [79, 120],
+					"width": 19,
+					"height": 140
+				},
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] += 37*dt;
+						if (obj["pos"][1] >= gs.canvas.height+140) {
+							obj["pos"][1] = -100;
+						}
+					},
+					"pos": [79, -30],
+					"width": 19,
+					"height": 100
+				},
+				// RIGHT COL
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] -= 13*dt;
+						if (obj["pos"][1] <= -240) {
+							obj["pos"][1] = gs.canvas.height + 0;
+						}
+					},
+					"pos": [119, 320],
+					"width": 19,
+					"height": 240
+				},
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] -= 13*dt;
+						if (obj["pos"][1] <= -160) {
+							obj["pos"][1] = gs.canvas.height + 80;
+						}
+					},
+					"pos": [119, 80],
+					"width": 19,
+					"height": 160
+				},
+				{
+					"type": "shape",
+					"zlevel": 30,
+					"shape": "rect",
+					"colour": 'rgb(205,8,20)',
+					"anim": (obj,dt,gs) => {
+						obj["pos"][1] -= 13*dt;
+						if (obj["pos"][1] <= -80) {
+							obj["pos"][1] = gs.canvas.height + 160;
+						}
+					},
+					"pos": [119, -50],
+					"width": 19,
+					"height": 80
+				},
+
+
+
 				{
 					"type": "text",
 					"zlevel": 100,
@@ -54,8 +202,8 @@ class GameState {
 					"value": "fuck",
 					"pos": [400, 300], 					
 					"colour": "#bad455",
-					"anim": (obj, dt, cvs) => {
-						obj.pos[0] = (obj.pos[0] + dt * 80) % cvs.width; 
+					"anim": (obj, dt, gs) => {
+						obj.pos[0] = (obj.pos[0] + dt * 80) % gs.canvas.width; 
 						if (obj.pos[0] < -100) obj.pos[0] = 400;
 						obj["font-size"] = ((obj["font-size"] + 1) % 60);
 					}
@@ -68,7 +216,7 @@ class GameState {
 	update(dt) {
 		// iterate over all animated objects and call their functions
 		this.elements["animation"].forEach((x) => {
-			x["anim"](x, dt, this.canvas);
+			x["anim"](x, dt, this);
 		});
 	}
 
@@ -86,7 +234,7 @@ class GameState {
 		//handle clicks if only there are elements that could
 		if ("clickable" in gs.elements) {
 			gs.elements["clickable"].forEach((el) => {
-				// TODO: we should determine what the contents should be first
+				// call the function for the clickable object
 				if (x >= el["bounds"][0] && x <= el["bounds"][0] + el["bounds"][2] && y >= el["bounds"][1] && y <= el["bounds"][1] + el["bounds"][3]) {
 					el["onclick"](el, gs);
 				}
