@@ -4,7 +4,6 @@
 var drawElements = {};
 var mainMenuAnims = {};
 
-
 class Renderer {
 	constructor(context, gameState) {
 		this.ctx = context;
@@ -13,11 +12,38 @@ class Renderer {
 
 	_draw(obj) {
 		//TOOD: draw the object onto the context
-		console.log(obj);
+		// console.log(obj);
+		if (obj.type == "text") {
+			this.ctx.save();
+
+			if ("rotation" in obj) {
+				this.ctx.rotate(obj.rotation);
+			}
+
+			this.ctx.fillStyle = obj.colour;
+			this.ctx.font = "" + obj["font-size"] + "px " + obj["font-family"];
+			this.ctx.fillText(obj.value, obj["pos"][0], obj["pos"][1]);
+
+			this.ctx.restore();
+
+		} else if (obj.type == "shape") {
+			this.ctx.save();
+
+			if (obj.shape === "rect") {
+				this.ctx.fillStyle = obj.colour;
+				this.ctx.fillRect(obj.pos[0], obj.pos[1], obj.width, obj.height);
+			}
+
+			this.ctx.restore();
+		} else if (obj.type == "image") {
+			console.log("image cunt");
+		}
 	} 
 
 	render() {
-		//TODO: based on z-level, draw objects
+
+		this.ctx.clearRect(0,0,gameState.canvas.width,gameState.canvas.height);
+
 		// warning! this assumes each array in getDraw is ordered by zlevel
 		let objs = gameState.getDraws();
 
@@ -35,7 +61,6 @@ class Renderer {
 					lens.push(val.length);
 					sum += val.length;
 				});
-
 
 		while (cSum < sum) {
 			//find the next lowest zLevel

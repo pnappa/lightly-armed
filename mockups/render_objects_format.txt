@@ -7,28 +7,19 @@ This is currently how the renderer expects objects to appear. Perhaps i'll just 
 Note that this is pretty much an OO rendering description, hopefully extendable to a library, because the world knows that we need another HTML5/JS game engine
 This is for fun, go away
 
+It actually could be better in this format, compared to single level - it means that updating clickables and animations are way easier
+
 
 this.elements:
 {
-	"text": [
+	"static": [		<= this field is for static visuals, that are not clickable/animated
 		{
-			"zlevel": INTEGER, <= this field is mandatory
+			"type": "text", 						<= how to handle drawing it, mandatory
+			"zlevel": INTEGER, 						<= this field is mandatory
 			"value": "this is the string printed",
-			"pos": [XPOS, YPOS], <= this is the position that the text is rendered
-			"size": NUMBER, <= size in pixels of the font
-			"family": Arial <= what font the text is rendered in
-		},
-		{
-			"zlevel": INTEGER + n, <= the zlevel must be ascending
-		},
-		..
-		{
-
-		}
-	],
-	"decor": [		<= this field is for static visuals, that are not clickable
-		{
-
+			"pos": [XPOS, YPOS], 					<= this is the position that the text is rendered
+			"size": NUMBER, 						<= size in pixels of the font
+			"family": Arial 						<= what font the text is rendered in
 		},
 		{
 
@@ -40,8 +31,46 @@ this.elements:
 	],
 	"clickable": [ 		<= objects that can be clicked, requires functor to handle
 	..
+		"onclick": (obj, gs) => {function},
+		"bounds": [xpos, ypos, width, height],			<=	where, if the mouse is clicked, that the onclick function is called
 	],
 	"animation": [		<= animated objects, must specify how to animate
 	..
+		{
+		...
+		"functor": (obj, dt) => {function} 			<= a function that changes the object. The obj passed into the function is the object itself
+		}
 	]
 }
+
+
+object format:
+[..] denotes optional
+
+{
+	"type": "text",
+	"zlevel": INTEGER,
+	"font": "48px Arial",
+	"value": "this is the string printed",
+	"pos": [XPOS, YPOS], 					<= this is the position that the text is rendered
+	"colour": "#bad455"						<= fuck yeah, its in Australian English
+	["rotation": radians]			
+}
+
+{
+	"type": "shape",
+	"zlevel": INTEGER,
+	"pos": [XPOS, YPOS],
+	"width": NUMBER,
+	"height": NUMBER,
+	"shape": "rect", 
+	"colour": "#fuck23"
+}
+
+{
+	"type": "image",
+	"zlevel": INTEGER,
+	"pos": [XPOS, YPOS],
+	"image": Image()						<= Image obj allows SVGs too!
+}
+
