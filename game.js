@@ -7,29 +7,33 @@
  */
 
 
-
 var cvs = document.getElementById("game");
 var ctx = cvs.getContext("2d");
 var gameState = new GameState(cvs, ctx);
 var renderer = new Renderer(ctx, gameState);
+var oldTime = Date.now();
+
+
+function update() {
+	let now = Date.now();
+	let dt = now - oldTime;
+
+	gameState.update(dt/1000);
+
+	oldTime = now;
+}
 
 function init() {
-	//TODO: more
+	ctx.imageSmoothingEnabled = false;
 	gameState.setScreen("main_menu");
+	// gameState.setScreen("game_menu");
+	var oldTime = Date.now();
+	setInterval(() => { update() }, 1000/60);
 }
 
 // game loop
 function main() {
-	let now = Date.now();
-	var dt = now - oldTime;
-
-	gameState.update(dt/1000);
 	renderer.render();
-
-	oldTime = now;
-
 	requestAnimationFrame(main);
 }
-
-var oldTime = Date.now();
 window.onload = () => { init(); main(); };
