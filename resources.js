@@ -93,7 +93,10 @@ var Scenes = {
 				"height": 66,
 				"colour": "rgb(46,160,203)",
 				"bounds": [331, 188, 269, 66],
-				"onclick": (obj, gs) => { console.log("playgame pressed"); }	
+				"onclick": (obj, gs) => { 
+                    console.log("playgame pressed"); 
+                    gs.setScreen("game_menu");
+                }	
 			},
 			{
 				"zlevel": 30,
@@ -118,19 +121,18 @@ var Scenes = {
 				"onclick": (obj, gs) => { console.log("how to play pressed"); }	
 			},
 			
-
-			// // random clickable
-			// {
-			// 	"zlevel": 69,
-			// 	"type": "shape",
-			// 	"shape": "rect",
-			// 	"pos": [300, 20],
-			// 	"width": 100,
-			// 	"height": 100,
-			// 	"colour": "red",
-			// 	"bounds": [300, 20, 100, 100],
-			// 	"onclick": (obj, gs) => { if (obj["colour"] === "red") { obj["colour"] = "blue"; } else { obj["colour"] = "red"; }}
-			// }
+			 // random clickable
+			 {
+			 	"zlevel": 69,
+			 	"type": "shape",
+			 	"shape": "rect",
+			 	"pos": [300, 20],
+			 	"width": 100,
+			 	"height": 100,
+			 	"colour": "red",
+			 	"bounds": [300, 20, 100, 100],
+			 	"onclick": (obj, gs) => { if (obj["colour"] === "red") { obj["colour"] = "blue"; } else { obj["colour"] = "red"; }}
+			 }
 		],
 		"animation": [
 			// LEFT COLUMN bars
@@ -141,8 +143,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] -= 30*dt;
-					if (obj["pos"][1] <= -240) {
-						obj["pos"][1] = gs.canvas.height + 0;
+					const offset = -240;
+					if (obj["pos"][1] <= offset) {
+						obj["pos"][1] = gs.canvas.height + 0 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [39, 300],
@@ -156,8 +159,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] -= 30*dt;
-					if (obj["pos"][1] <= -160) {
-						obj["pos"][1] = gs.canvas.height + 80;
+					const offset = -160;
+					if (obj["pos"][1] <= offset) {
+						obj["pos"][1] = gs.canvas.height + 80 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [39, 60],
@@ -171,8 +175,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] -= 30*dt;
-					if (obj["pos"][1] <= -80) {
-						obj["pos"][1] = gs.canvas.height + 160;
+					const offset = -80;
+					while (obj["pos"][1] <= offset) {
+						obj["pos"][1] = gs.canvas.height + 160 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [39, -50],
@@ -187,8 +192,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] += 40*dt;
-					if (obj["pos"][1] >=  gs.canvas.height) {
-						obj["pos"][1] = -240;
+					const offset = gs.canvas.height;
+					if (obj["pos"][1] >= offset) {
+						obj["pos"][1] = -240 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [79, 340],
@@ -202,8 +208,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] += 40*dt;
-					if (obj["pos"][1] >= gs.canvas.height+100) {
-						obj["pos"][1] = -140;
+					const offset = gs.canvas.height+100;
+					if (obj["pos"][1] >= offset) {
+						obj["pos"][1] = -140 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [79, 120],
@@ -217,8 +224,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] += 40*dt;
-					if (obj["pos"][1] >= gs.canvas.height+140) {
-						obj["pos"][1] = -100;
+					const offset = gs.canvas.height+140;
+					if (obj["pos"][1] >= offset) {
+						obj["pos"][1] = -100 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [79, -30],
@@ -233,8 +241,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] -= 10*dt;
-					if (obj["pos"][1] <= -240) {
-						obj["pos"][1] = gs.canvas.height + 0;
+					const offset = -240;
+					if (obj["pos"][1] <= offset) {
+						obj["pos"][1] = gs.canvas.height + 0 + (obj["pos"][1] % offset) ;
 					}
 				},
 				"pos": [119, 320],
@@ -248,8 +257,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] -= 10*dt;
-					if (obj["pos"][1] <= -160) {
-						obj["pos"][1] = gs.canvas.height + 80;
+					const offset = -160;
+					if (obj["pos"][1] <= offset) {
+						obj["pos"][1] = gs.canvas.height + 80 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [119, 80],
@@ -263,8 +273,9 @@ var Scenes = {
 				"colour": 'rgb(205,8,20)',
 				"anim": (obj,dt,gs) => {
 					obj["pos"][1] -= 10*dt;
-					if (obj["pos"][1] <= -80) {
-						obj["pos"][1] = gs.canvas.height + 160;
+					const offset = -80;
+					if (obj["pos"][1] <= offset) {
+						obj["pos"][1] = gs.canvas.height + 160 + (obj["pos"][1] % offset);
 					}
 				},
 				"pos": [119, -50],
@@ -294,5 +305,9 @@ var Scenes = {
 		"static": [],
 		"clickable": [],
 		"animation": []
-	}
+	},
+    // where the game is played (i.e. controlling characters, etc)
+    "game_screen": {
+
+    }
 }

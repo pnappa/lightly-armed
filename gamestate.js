@@ -10,6 +10,28 @@ class GameState {
 		this.elements = {};
 		// allow us to emulate mouse interactions
 		this.canvas.addEventListener('click', (event) => {this.clickHandler(event, this); }, false);
+		// document compared to canvas, as the canvas will not have focus, probably.
+		// if we were to embed this in a scrollable, I suppose I should set tabindex, so make it focus, and instead use canvas
+		document.addEventListener('keydown', (event) => {this.keyHandler(event, this); }, false);
+
+		// // animations mess up on tab changes, so it's better to leave it
+		// this.isFocused = true;
+		// // if during this frame we focus
+		// this.beginFocus = true;
+		// window.addEventListener('focus', (event) => { this.makeFocus(event, this); }, false);
+		// window.addEventListener('blur', (event) => { this.stopFocus(event, this); }, false);
+	}
+
+	makeFocus(event, gs) {
+		// console.log("focusing");
+		// gs.isFocused = true;
+		// gs.beginFocus = true;
+	}
+
+	stopFocus(event, gs) {
+		// console.log("unfocusing");
+		// gs.isFocused = false;
+		// gs.beginFocus = false;
 	}
 
 	/* set the elements that should be drawn for this menu */
@@ -19,10 +41,19 @@ class GameState {
 	}
 
 	update(dt) {
-		// iterate over all animated objects and call their functions
-		this.elements["animation"].forEach((x) => {
-			x["anim"](x, dt, this);
-		});
+		if (dt >= 0.02) console.log(dt);
+		// if (this.isFocused === true) {
+		// 	// if we just focused this round, ignore it, as the delta will be off
+		// 	if (this.beginFocus == true) {
+		// 		this.beginFocus = false;
+		// 		dt = 0.0;
+		// 	} 
+
+			// iterate over all animated objects and call their functions
+			this.elements["animation"].forEach((x) => {
+				x["anim"](x, dt, this);
+			});	
+		// }
 	}
 
 	getDraws() {
@@ -50,5 +81,10 @@ class GameState {
 		if (gs.screenState["name"] === "gameplay") {
 			//TODO: handle mouse clicks with respect to where they will be placed
 		}
+	}
+
+	/* handle keyboard events */
+	keyHandler(event, gs) {
+		console.log(event);
 	}
 }
