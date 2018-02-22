@@ -11,15 +11,14 @@ class Renderer {
 	}
 
 	_draw(obj) {
-		//TOOD: draw the object onto the context
-		// console.log(obj);
 		this.ctx.save();
 
+        // TODO: make this rotation around the object origin, not the 0,0 point
 		if ("rotation" in obj) {
 			this.ctx.rotate(obj.rotation);
 		}
 
-		if (obj.type == "text") {
+		if (obj.type === "text") {
 			this.ctx.fillStyle = obj.colour;
 			this.ctx.font = "" + obj["font-size"] + "px " + obj["font-family"];
 			if ("font-weight" in obj) { 
@@ -27,14 +26,14 @@ class Renderer {
 			}
 			this.ctx.fillText(obj.value, obj["pos"][0], obj["pos"][1]);
 
-		} else if (obj.type == "shape") {
+		} else if (obj.type === "shape") {
 
 			if (obj.shape === "rect") {
 				this.ctx.fillStyle = obj.colour;
 				this.ctx.fillRect(obj.pos[0], obj.pos[1], obj.width, obj.height);
 			}
 
-		} else if (obj.type == "image") {
+		} else if (obj.type === "image") {
 			if ("width" in obj) {
 				this.ctx.drawImage(obj.src, obj.pos[0], obj.pos[1], obj.width, obj.height);			
 			} else {
@@ -87,7 +86,7 @@ class Renderer {
 					}
 				});
 
-			if (!lowObj) throw "invalid render state";
+			if (!lowObj) throw "invalid render state, objects are likely not ordered properly";
 			//draw the candidate
 			cSum++;
 			this._draw(lowObj);

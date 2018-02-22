@@ -41,7 +41,7 @@ class GameState {
 	}
 
 	update(dt) {
-		if (dt >= 0.02) console.log(dt);
+		//if (dt >= 0.02) console.log(dt);
 		// if (this.isFocused === true) {
 		// 	// if we just focused this round, ignore it, as the delta will be off
 		// 	if (this.beginFocus == true) {
@@ -70,8 +70,10 @@ class GameState {
 		//handle clicks if only there are elements that could
 		if ("clickable" in gs.elements) {
 			gs.elements["clickable"].forEach((el) => {
-				// call the function for the clickable object
-				if (x >= el["bounds"][0] && x <= el["bounds"][0] + el["bounds"][2] && y >= el["bounds"][1] && y <= el["bounds"][1] + el["bounds"][3]) {
+				// call the function for the clickable object if within bounds
+				if (x >= el["bounds"][0] && x <= el["bounds"][0] + el["bounds"][2] &&
+                    y >= el["bounds"][1] && y <= el["bounds"][1] + el["bounds"][3]) {
+
 					el["onclick"](el, gs);
 				}
 			});
@@ -80,8 +82,27 @@ class GameState {
 		// handle the clicks designed for game playing
 		if (gs.screenState["name"] === "gameplay") {
 			//TODO: handle mouse clicks with respect to where they will be placed
+
+            // lets just fire a line, 
 		}
 	}
+
+    /* given this object, delete it from gs.elements */
+    deleteObj(obj) {
+        // refer to resources.js (Scenes["main_menu"] or w/e) for the structure
+        Object.values(this.elements).forEach(
+            (result, index) => {
+                // err, remember that they're arrays within objs (i.e. clickable->[], etc)
+                result.forEach(
+                    (r, i) => {
+                        if (r === obj) {
+                            result.splice(i, 1);
+                            return;
+                        }
+                    });
+        });
+
+    }
 
 	/* handle keyboard events */
 	keyHandler(event, gs) {

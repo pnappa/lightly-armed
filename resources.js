@@ -3,7 +3,37 @@ var title_text = new Image();
 title_text.src = "resources/title_text.svg";
 
 var RESOURCES = {
-	"title_text": title_text
+	"title_text": title_text,
+    "ray_projectile": {
+        "colour": "red",
+        "shape": "line",
+        // defines end points of line
+        "pos": [[0,0],[0,0]],
+        // girth :o
+        "width": 10,
+        // how many seconds the object is alive for
+        "lifetime": 0.10,
+        // have to give it an id to differ it from the rest 
+        // make sure to set!
+        "id": "",
+        "anim": (obj, dt, gs) => {
+            // whether to remove oneself
+            obj.lifetime -= dt;
+            if (obj.lifetime <= 0) {
+                gs.deleteObj(obj);
+            }
+        }
+    },
+    "player": {
+        "colour": "blue",
+        "type": "shape",
+        "shape": "rect",
+        "pos": [100, 100],
+        "width": 20,
+        "height": 20,
+        "id": "" 
+
+    }
 }
 
 // these are expanded in init
@@ -127,11 +157,15 @@ var Scenes = {
 			 	"type": "shape",
 			 	"shape": "rect",
 			 	"pos": [300, 20],
-			 	"width": 100,
-			 	"height": 100,
+			 	"width": 50,
+			 	"height": 50,
 			 	"colour": "red",
 			 	"bounds": [300, 20, 100, 100],
-			 	"onclick": (obj, gs) => { if (obj["colour"] === "red") { obj["colour"] = "blue"; } else { obj["colour"] = "red"; }}
+			 	"onclick": (obj, gs) => { 
+                    gs.deleteObj(obj);
+                    //if (obj["colour"] === "red") { obj["colour"] = "blue"; } else { obj["colour"] = "red"; }
+                
+                }
 			 }
 		],
 		"animation": [
@@ -283,8 +317,6 @@ var Scenes = {
 				"height": 80
 			},
 
-
-
 			{
 				"type": "text",
 				"zlevel": 100,
@@ -298,7 +330,28 @@ var Scenes = {
 					if (obj.pos[0] < -100) obj.pos[0] = 400;
 					obj["font-size"] = ((obj["font-size"] + 1) % 60);
 				}
-			}
+			},
+
+            // test self removal after delay
+            {
+                "zlevel": 100,
+                "type": "shape",
+                "shape": "rect",
+                "pos": [240, 20],
+                "width": 50,
+                "height": 50,
+                "colour": "blue",
+                "bounds": [300, 20, 100, 100],
+                "rotation": 0,
+                "lifetime": 10,
+                "anim": (obj, dt, gs) => { 
+                    obj["lifetime"] -= dt;
+                    if (obj["lifetime"] < 0) {
+                        gs.deleteObj(obj);
+                    }
+                    obj["rotation"] += dt;
+                }
+            }
 		]
 	},
 	"game_menu": {
@@ -307,7 +360,11 @@ var Scenes = {
 		"animation": []
 	},
     // where the game is played (i.e. controlling characters, etc)
-    "game_screen": {
-
+    "gameplay": {
+        // i suppose UI?
+        "static": [],
+        "clickable": [],
+        // where drawables can be injected to be affected by the renderer
+        "animation": []
     }
 }
