@@ -50,25 +50,17 @@ class GameState {
         // sort by zlevel
         this.elements.sort(
             (a, b) => {
-                let az = a["zlevel"];
-                let bz = b["zlevel"];
-                return ((az < bz) ? -1 : ((az > bz) ? 1 : 0));
+                return a["zlevel"] > b["zlevel"];
             });
 
         // populate the clickable and animatedReference elements
         // these just indicate where to look in the element list
         this.elements.forEach(
             (el, index) => {
-                if ("anim" in el) {
-                    this.animatedReference.push(index);
-                    // to allow easy referential deletion
-                    el["index"] = index;
-                }
+                if ("anim" in el) this.animatedReference.push(index);
                 if ("onclick" in el) {
                     if (!("bounds" in el)) throw "clickable object without bounding box";
                     this.clickableReference.push(index);
-                    // to allow easy referential deletion
-                    el["index"] = index;
                 }
             });
 	}
@@ -107,7 +99,6 @@ class GameState {
                 // ignore removed elements
                 if (ind === null) return;
                 let el = this.elements[ind];
-                if (el === null) return;
                 let bounds = el["bounds"];
                 if (x >= bounds[0] && x <= bounds[0] + bounds[2] &&
                     y >= bounds[1] && y <= bounds[1] + bounds[3]) {
@@ -137,29 +128,20 @@ class GameState {
 
     /* given this object, delete it from gs.elements */
     deleteObj(obj) {
-        //throw "unimplemented function... haven't updated to the new render format";
-        let ind = obj["index"];
+        throw "unimplemented function... haven't updated to the new render format";
+        // refer to resources.js (Scenes["main_menu"] or w/e) for the structure
+        Object.values(this.elements).forEach(
+            (result, index) => {
+                // err, remember that they're arrays within objs (i.e. clickable->[], etc)
+                result.forEach(
+                    (r, i) => {
+                        if (r === obj) {
+                            result.splice(i, 1);
+                            return;
+                        }
+                    });
+        });
 
-        // search through the animated references and nullify them
-        if ("anim" in obj) {
-            this.animatedReference.forEach(
-                (v, i) => {
-                    if (v === ind) {
-                        this.animatedReference[i] = null;
-                    }
-                });
-        }
-        // search through and remove from clickable
-        if ("onclick" in obj) {
-            this.clickableReference.forEach(
-                (v, i) => {
-                    if (v === ind) {
-                        this.clickableReference[i] = null;
-                    }
-                });
-        }
-
-        this.elements[ind] = null;
     }
 
 	/* handle keyboard events */

@@ -26,15 +26,16 @@ function update() {
 
 function init() {
 	ctx.imageSmoothingEnabled = false;
-	//gameState.setScreen("main_menu");
-	gameState.setScreen("gameplay");
+	gameState.setScreen("main_menu");
+	//gameState.setScreen("gameplay");
 	var oldTime = Date.now();
-	setInterval(() => { update() }, 1000/60);
+	//setInterval(() => { update() }, 1000/60);
 }
 
 // game loop
 function main() {
 	renderer.render();
+    update();
 	requestAnimationFrame(main);
 }
 window.onload = () => { init(); main(); };
