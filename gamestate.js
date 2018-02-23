@@ -42,7 +42,7 @@ class GameState {
 	/* set the elements that should be drawn for this menu */
 	setScreen(menu) {
 		this.screenState = menu;
-        // TODO: clone by json.dumps & load
+        // TODO: clone by json.dumps & load (not sure why.. maybe its because I set the index?
 		this.elements = Scenes[menu];
         this.clickableReference = [];
         this.animatedReference = [];
@@ -59,17 +59,18 @@ class GameState {
         // these just indicate where to look in the element list
         this.elements.forEach(
             (el, index) => {
+                // to allow easy referential deletion
+                el["index"] = index;
+
                 if ("anim" in el) {
                     this.animatedReference.push(index);
-                    // to allow easy referential deletion
-                    el["index"] = index;
                 }
+
                 if ("onclick" in el) {
                     if (!("bounds" in el)) throw "clickable object without bounding box";
                     this.clickableReference.push(index);
-                    // to allow easy referential deletion
-                    el["index"] = index;
                 }
+
             });
 	}
 
@@ -114,18 +115,6 @@ class GameState {
                     el["onclick"](el, this);
                 }
             });
-
-		////handle clicks if only there are elements that could
-		//if ("clickable" in gs.elements) {
-		//	gs.elements["clickable"].forEach((el) => {
-		//		// call the function for the clickable object if within bounds
-		//		if (x >= el["bounds"][0] && x <= el["bounds"][0] + el["bounds"][2] &&
-        //            y >= el["bounds"][1] && y <= el["bounds"][1] + el["bounds"][3]) {
-
-		//			el["onclick"](el, gs);
-		//		}
-		//	});
-		//}
 
 		// handle the clicks designed for game playing
 		if (this.screenState["name"] === "gameplay") {

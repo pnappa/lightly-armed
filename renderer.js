@@ -52,6 +52,7 @@ class Renderer {
 		let objs = gameState.getDraws();
 
         for (var i = 0; i < objs.length; ++i) {
+            // ignore deleted objects
             if (objs[i] === null) continue;
             this._draw(objs[i]);
         }
