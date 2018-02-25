@@ -11,6 +11,7 @@ class Renderer {
 	}
 
 	_draw(obj) {
+
 		this.ctx.save();
 
         // TODO: make this rotation around the object origin, not the 0,0 point
@@ -39,7 +40,7 @@ class Renderer {
 			} else {
 				this.ctx.drawImage(obj.src, obj.pos[0], obj.pos[1]);
 			}
-		}
+		} 
 
 		this.ctx.restore();
 
@@ -54,7 +55,12 @@ class Renderer {
         for (var i = 0; i < objs.length; ++i) {
             // ignore deleted objects
             if (objs[i] === null) continue;
-            this._draw(objs[i]);
+            
+            if (typeof objs[i].draw == 'function') { 
+                objs[i].draw(this.ctx);
+            } else {
+                this._draw(objs[i]);
+            }
         }
 	}
 }

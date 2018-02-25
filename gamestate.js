@@ -12,12 +12,18 @@ class GameState {
         this.clickableReference = [];
         // stores the index that animated objects reside in
         this.animatedReference = [];
+
+        this.player = new Player(50, 50);
         
 		// allow us to emulate mouse interactions
 		this.canvas.addEventListener('click', (event) => {this.clickHandler(event); }, false);
 		// document compared to canvas, as the canvas will not have focus, probably.
 		// if we were to embed this in a scrollable, I suppose I should set tabindex, so make it focus, and instead use canvas
 		document.addEventListener('keydown', (event) => {this.keyHandler(event); }, false);
+
+        canvas.addEventListener('mousemove', (event) => {this.mouseMoveHandler(event); }, false);
+
+
 
 		// // animations mess up on tab changes, so it's better to leave it
 		// this.isFocused = true;
@@ -72,6 +78,11 @@ class GameState {
                 }
 
             });
+
+        // XXX: temp
+        if (menu === "gameplay") {
+            this.elements.push(this.player);
+        }
 	}
 
 	update(dt) {
@@ -96,6 +107,24 @@ class GameState {
 		if (!this.screenState) throw "could not draw null scene";
 		return this.elements;
 	}
+
+    mouseMoveHandler(event) {
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        var mousePos = getMousePos(this.canvas, event);
+
+        // rotate the player
+        if (this.screenState == "gameplay") {
+            if (this.player != null) {
+                this.player.lookTowards(mousePos.x, mousePos.y);
+            }
+        }
+    }
 
 	// handle the clicks, and determine what needs to be done on click
 	clickHandler(event) {
@@ -126,7 +155,6 @@ class GameState {
 
     /* given this object, delete it from gs.elements */
     deleteObj(obj) {
-        //throw "unimplemented function... haven't updated to the new render format";
         let ind = obj["index"];
 
         // search through the animated references and nullify them
