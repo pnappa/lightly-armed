@@ -13,11 +13,13 @@ class Player {
 
         this.img = new Image();
         this.img.src = "resources/player.svg";
+
+        this.zlevel = 50;
     }
 
     draw(ctx) {
-        //Convert degrees to radian 
-        //let rad = this.rotation * Math.PI / 180;
+        // the rotation code was from stack overflow ... TODO: attribute
+        // radians var
         let rad = this.rotation;
 
         //Set the origin to the center of the image
@@ -40,5 +42,11 @@ class Player {
         let yOffset = -((this.ypos + this.sheight/2) - y);
 
         this.rotation = Math.atan2(yOffset, xOffset);
+    }
+
+    move(x, y) {
+        // move the players location += this vector
+        this.xpos += x;
+        this.ypos += y;
     }
 }

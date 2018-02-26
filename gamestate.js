@@ -14,15 +14,20 @@ class GameState {
         this.animatedReference = [];
 
         this.player = new Player(50, 50);
+
+
+        // because events are dumb, we store the event keypress in an array
+        // and query this per update frame
+        this.keys = [];
         
 		// allow us to emulate mouse interactions
 		this.canvas.addEventListener('click', (event) => {this.clickHandler(event); }, false);
 		// document compared to canvas, as the canvas will not have focus, probably.
 		// if we were to embed this in a scrollable, I suppose I should set tabindex, so make it focus, and instead use canvas
-		document.addEventListener('keydown', (event) => {this.keyHandler(event); }, false);
+		document.addEventListener('keydown', (event) => {this.keys[event.keyCode] = true; }, false);
+		document.addEventListener('keyup', (event) => {this.keys[event.keyCode] = false; }, false);
 
         canvas.addEventListener('mousemove', (event) => {this.mouseMoveHandler(event); }, false);
-
 
 
 		// // animations mess up on tab changes, so it's better to leave it
@@ -48,10 +53,15 @@ class GameState {
 	/* set the elements that should be drawn for this menu */
 	setScreen(menu) {
 		this.screenState = menu;
-        // TODO: clone by json.dumps & load (not sure why.. maybe its because I set the index?
+        // TODO: clone by json.dumps & load (retcon: not sure why.. maybe its because I set the index?)
 		this.elements = Scenes[menu];
         this.clickableReference = [];
         this.animatedReference = [];
+        
+        // TODO: replace with a better way of injecting elements
+        if (this.screenState === "gameplay") {
+            this.elements.push(this.player);
+        }
 
         // sort by zlevel
         this.elements.sort(
@@ -78,11 +88,6 @@ class GameState {
                 }
 
             });
-
-        // XXX: temp
-        if (menu === "gameplay") {
-            this.elements.push(this.player);
-        }
 	}
 
 	update(dt) {
@@ -101,6 +106,15 @@ class GameState {
                 if (ind === null) return;
                 this.elements[ind]["anim"](this.elements[ind], dt, this);
             });
+
+        // w
+        if (this.keys[87]) this.player.move(0, -CHAR_SPEED); 
+        // a 
+        if (this.keys[65]) this.player.move(-CHAR_SPEED, 0); 
+        // s
+        if (this.keys[83]) this.player.move(0, CHAR_SPEED); 
+        // d
+        if (this.keys[68]) this.player.move(CHAR_SPEED, 0); 
 	}
 
 	getDraws() {
@@ -178,9 +192,4 @@ class GameState {
 
         this.elements[ind] = null;
     }
-
-	/* handle keyboard events */
-	keyHandler(event) {
-		console.log(event);
-	}
 }

@@ -2,6 +2,8 @@
 var title_text = new Image();
 title_text.src = "resources/title_text.svg";
 
+var CHAR_SPEED = 5;
+
 var RESOURCES = {
 	"title_text": title_text,
     "ray_projectile": {
@@ -157,7 +159,7 @@ var Scenes = {
             "width": 50,
             "height": 50,
             "colour": "red",
-            "bounds": [300, 20, 100, 100],
+            "bounds": [300, 20, 50, 50],
             "onclick": (obj, gs) => { 
                 gs.deleteObj(obj);
                 //if (obj["colour"] === "red") { obj["colour"] = "blue"; } else { obj["colour"] = "red"; }
@@ -336,7 +338,6 @@ var Scenes = {
             "width": 50,
             "height": 50,
             "colour": "blue",
-            "bounds": [300, 20, 100, 100],
             "rotation": 0,
             "lifetime": 10,
             "anim": (obj, dt, gs) => { 
@@ -353,6 +354,17 @@ var Scenes = {
 	],
     // where the game is played (i.e. controlling characters, etc)
     "gameplay": [
+        {
+            "zlevel": 100,
+            "type": "shape",
+            "shape": "rect",
+            "pos": [0, 0],
+            // canvas size
+            "width": 600,
+            "height": 40,
+            "colour": "black",
+            "bounds": [0, 0, 600, 420],
+        }
 
     ]
 }
