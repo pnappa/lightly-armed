@@ -19,6 +19,8 @@ class GameState {
         // because events are dumb, we store the event keypress in an array
         // and query this per update frame
         this.keys = [];
+        // cache mouse pos, such that on character movement, we still have them pointing to the mouse
+        this.mousePos = null;
         
 		// allow us to emulate mouse interactions
 		this.canvas.addEventListener('click', (event) => {this.clickHandler(event); }, false);
@@ -107,14 +109,19 @@ class GameState {
                 this.elements[ind]["anim"](this.elements[ind], dt, this);
             });
 
-        // w
-        if (this.keys[87]) this.player.move(0, -CHAR_SPEED); 
-        // a 
-        if (this.keys[65]) this.player.move(-CHAR_SPEED, 0); 
-        // s
-        if (this.keys[83]) this.player.move(0, CHAR_SPEED); 
-        // d
-        if (this.keys[68]) this.player.move(CHAR_SPEED, 0); 
+        if (this.screenState === "gameplay" && this.player != null) {
+            // w
+            if (this.keys[87]) this.player.move(0, -CHAR_SPEED * dt); 
+            // a 
+            if (this.keys[65]) this.player.move(-CHAR_SPEED * dt, 0); 
+            // s
+            if (this.keys[83]) this.player.move(0, CHAR_SPEED * dt); 
+            // d
+            if (this.keys[68]) this.player.move(CHAR_SPEED * dt, 0); 
+
+            // update character to look at the last-known position of the mouse cursor
+            if (this.mousePos != null) this.player.lookTowards(this.mousePos.x, this.mousePos.y);
+        }
 	}
 
 	getDraws() {
@@ -130,14 +137,7 @@ class GameState {
                 y: evt.clientY - rect.top
             };
         }
-        var mousePos = getMousePos(this.canvas, event);
-
-        // rotate the player
-        if (this.screenState == "gameplay") {
-            if (this.player != null) {
-                this.player.lookTowards(mousePos.x, mousePos.y);
-            }
-        }
+        this.mousePos = getMousePos(this.canvas, event);
     }
 
 	// handle the clicks, and determine what needs to be done on click
