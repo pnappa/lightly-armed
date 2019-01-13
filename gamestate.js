@@ -151,6 +151,17 @@ class GameState {
 
 		var x = event.pageX - this.leftOffset;
 		var y = event.pageY - this.topOffset;
+        
+        // XXX: i moved this up here because if we moved towards the gameplay, it meant that
+        // we fired a laser. moving it up here is still gonna cause problems, but
+        // we're not facing them now, so let's deal with that in the future.
+		// handle the clicks designed for game playing
+		if (this.screenState === "gameplay") {
+			//TODO: handle mouse clicks with respect to where they will be placed
+
+            // lets just fire a line, 
+            this.player.fireLaser(x,y);
+		}
 
         this.clickableReference.forEach(
             (ind) => {
@@ -168,12 +179,6 @@ class GameState {
                 }
             });
 
-		// handle the clicks designed for game playing
-		if (this.screenState["name"] === "gameplay") {
-			//TODO: handle mouse clicks with respect to where they will be placed
-
-            // lets just fire a line, 
-		}
 	}
 
     /* given this object, delete it from gs.elements */

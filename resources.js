@@ -7,18 +7,24 @@ var CHAR_SPEED = 100;
 var RESOURCES = {
 	"title_text": title_text,
     "ray_projectile": {
-        "colour": "red",
+        "colour": "rgba(255, 0, 0, 1)",
+        "type": "shape",
         "shape": "line",
         // defines end points of line
         "pos": [[0,0],[0,0]],
         // girth :o
-        "width": 10,
+        "width": 3,
         // how many seconds the object is alive for
-        "lifetime": 0.10,
+        "startinglifetime": 0.3,
+        "lifetime": 0.3,
         // have to give it an id to differ it from the rest 
         // make sure to set!
         "id": "",
         "anim": (obj, dt, gs) => {
+            // set opacity based on remaining time left
+            // TODO: remove, this is a bit hacky
+            obj.colour = "rgba(255, 0, 0, " + obj.lifetime/obj.startinglifetime + ")";
+            
             // whether to remove oneself
             obj.lifetime -= dt;
             if (obj.lifetime <= 0) {
@@ -369,7 +375,7 @@ var Scenes = {
             "height": 40,
             "colour": "black",
             "bounds": [0, 0, 600, 40],
-            // player shouldn't be able to move into 
+            // player shouldn't be able to move into the menubar
             "oncollide": () => {}
         },
 
@@ -395,7 +401,6 @@ var Scenes = {
             "width": 50,
             "height": 420,
             "colour": "black",
-            // when colliding with this object?
             "oncollide": () => { }
         },
         {
@@ -406,7 +411,6 @@ var Scenes = {
             "width": 50,
             "height": 420,
             "colour": "black",
-            // when colliding with this object?
             "oncollide": () => { }
         },
         {
@@ -417,7 +421,6 @@ var Scenes = {
             "width": 600,
             "height": 50,
             "colour": "black",
-            // when colliding with this object?
             "oncollide": () => { }
         },
         

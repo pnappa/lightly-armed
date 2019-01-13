@@ -38,6 +38,23 @@ class Player {
         ctx.translate((this.xpos + this.swidth / 2) * (-1), (this.ypos + this.sheight / 2) * (-1));
     }
 
+    fireLaser(x, y) {
+        console.log('firing muh laz0r');
+        // TODO: add cooldown, and check
+        // TODO: make this obj not the toppest z-level?
+
+        // shallow copy, and clone non primitives
+        var newLaser = Object.assign({}, RESOURCES['ray_projectile']);
+        // TODO: make starting proper x,y pos (eye pos?)
+        newLaser["pos"] = [[this.xpos + this.swidth/2, this.ypos + this.sheight/2], [x, y]];
+
+        // add to the gameState
+        let index = this.gameState.elements.push(newLaser) - 1;
+        newLaser['index'] = index;
+        console.log(newLaser);
+        this.gameState.animatedReference.push(index);
+    }
+
     lookTowards(x, y) {
         // given this mouse pos, rotate the character towards this point
         let xOffset = -((this.xpos + this.swidth/2) - x);

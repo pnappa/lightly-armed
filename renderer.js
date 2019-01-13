@@ -32,7 +32,14 @@ class Renderer {
 			if (obj.shape === "rect") {
 				this.ctx.fillStyle = obj.colour;
 				this.ctx.fillRect(obj.pos[0], obj.pos[1], obj.width, obj.height);
-			}
+			} else if (obj.shape === "line") {
+                this.ctx.beginPath();
+                this.ctx.lineWidth = obj.width;
+                this.ctx.strokeStyle = obj.colour;
+                this.ctx.moveTo(obj.pos[0][0], obj.pos[0][1]);
+                this.ctx.lineTo(obj.pos[1][0], obj.pos[1][1]);
+                this.ctx.stroke();
+            }
 
 		} else if (obj.type === "image") {
 			if ("width" in obj) {
