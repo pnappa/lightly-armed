@@ -356,6 +356,7 @@ var Scenes = {
 
 	],
     // where the game is played (i.e. controlling characters, etc)
+    // TODO: make this load from levels?
     "gameplay": [
         // menu bar
         {
@@ -368,6 +369,8 @@ var Scenes = {
             "height": 40,
             "colour": "black",
             "bounds": [0, 0, 600, 40],
+            // player shouldn't be able to move into 
+            "oncollide": () => {}
         },
 
         // walls (above player)
@@ -379,9 +382,44 @@ var Scenes = {
             "width": 50,
             "height": 50,
             "colour": "black",
-            "bounds": [100, 50, 50, 50],
             // when colliding with this object?
             "oncollide": () => { }
-        }
+        },
+         
+        // restrict player within view
+        {
+            "zlevel": 70,
+            "type": "shape",
+            "shape": "rect",
+            "pos": [-50, 0],
+            "width": 50,
+            "height": 420,
+            "colour": "black",
+            // when colliding with this object?
+            "oncollide": () => { }
+        },
+        {
+            "zlevel": 70,
+            "type": "shape",
+            "shape": "rect",
+            "pos": [600, 0],
+            "width": 50,
+            "height": 420,
+            "colour": "black",
+            // when colliding with this object?
+            "oncollide": () => { }
+        },
+        {
+            "zlevel": 70,
+            "type": "shape",
+            "shape": "rect",
+            "pos": [0, 420],
+            "width": 600,
+            "height": 50,
+            "colour": "black",
+            // when colliding with this object?
+            "oncollide": () => { }
+        },
+        
     ]
 }

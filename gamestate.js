@@ -161,17 +161,7 @@ class GameState {
                 // some bounded elements may not necessarily be clickable
                 if (!el["onclick"]) return;
 
-                let bounds = null;
-                // if bounds are available, use them, otherwise use the default height/width
-                // and x,y positions
-                // TODO: should we populate this when loading the scene? may improve performance
-                if (el["bounds"]) { 
-                    bounds = el["bounds"];
-                } else {
-                    let elX = el["pos"][0];
-                    let elY = el["pos"][1];
-                    bounds = [elX, elY, el["width"], el["height"]];
-                }
+                let bounds = getBounds(el);
 
                 if (pointInRect(x, y, bounds[0], bounds[1], bounds[2], bounds[3])) {
                     el["onclick"](el, this);
@@ -190,34 +180,16 @@ class GameState {
     deleteObj(obj) {
         let ind = obj["index"];
 
-        // TODO: refactor down to not violate DRY
-
-        // search through the animated references and nullify them
-        if ("anim" in obj) {
-            this.animatedReference.forEach(
-                (v, i) => {
-                    if (v === ind) {
-                        this.animatedReference[i] = null;
-                    }
-                });
-        }
-        // search through and remove from clickable
-        if ("onclick" in obj) {
-            this.clickableReference.forEach(
-                (v, i) => {
-                    if (v === ind) {
-                        this.clickableReference[i] = null;
-                    }
-                });
-        }
-
-        if ("oncollide" in obj) {
-            this.collidableReference.forEach(
+        // search through the animated, clickable, collidable references and nullify them
+        const mapLookup = {"anim": this.animatedReference, "onclick": this.clickableReference, "oncollide": this.collidableReference};
+        for (var key in mapLookup) {
+            mapLookup[key].forEach(
                 (v, i) => {
                     if (v == ind) {
-                        this.collidableReference[i] = null;
+                        mapLookup[key][i] = null; 
                     }
-                });
+                }
+            );
         }
 
         this.elements[ind] = null;

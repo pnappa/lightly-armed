@@ -57,11 +57,14 @@ class Player {
 
         let playerBounds = [futurePosX, futurePosY, this.swidth, this.sheight];
 
+        // TODO: add different types of collisions
+        //      - circle/rect (so the character doesn't get stuck on corners)
+        //      - non-AABB?
         // check collisions
         // XXX: replace this dumb method (where no interpolation is done)
         this.gameState.collidableReference.forEach((el, index) => {
             el = this.gameState.elements[el];
-            if (rectsIntersect(playerBounds, el["bounds"])) {
+            if (rectsIntersect(playerBounds, getBounds(el))) {
                 console.log('collision');
                 futureCol = true;
             }
