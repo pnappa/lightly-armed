@@ -124,7 +124,10 @@ var Scenes = {
             "bounds": [331, 188, 269, 66],
             "onclick": (obj, gs) => { 
                 console.log("playgame pressed"); 
-                gs.setScreen("game_menu");
+                //gs.setScreen("game_menu");
+                // temporarily just set it to go directly to game for now
+                // as there's no game menu stuff yet.
+                gs.setScreen("gameplay");
             }	
         },
         {
@@ -354,6 +357,7 @@ var Scenes = {
 	],
     // where the game is played (i.e. controlling characters, etc)
     "gameplay": [
+        // menu bar
         {
             "zlevel": 100,
             "type": "shape",
@@ -363,8 +367,21 @@ var Scenes = {
             "width": 600,
             "height": 40,
             "colour": "black",
-            "bounds": [0, 0, 600, 420],
-        }
+            "bounds": [0, 0, 600, 40],
+        },
 
+        // walls (above player)
+        {
+            "zlevel": 70,
+            "type": "shape",
+            "shape": "rect",
+            "pos": [100, 50],
+            "width": 50,
+            "height": 50,
+            "colour": "black",
+            "bounds": [100, 50, 50, 50],
+            // when colliding with this object?
+            "oncollide": () => { }
+        }
     ]
 }

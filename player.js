@@ -1,11 +1,13 @@
 
 class Player {
-    constructor(x, y) {
+    constructor(x, y, gs) {
         // location of player in canvas
         this.xpos = x;
         this.ypos = y;
         // RADIANS
         this.rotation = 0;
+
+        this.gameState = gs;
 
         // player sprite and properties
         this.swidth = 30;
@@ -44,9 +46,31 @@ class Player {
         this.rotation = Math.atan2(yOffset, xOffset);
     }
 
+    setCollidables(colls) {
+        this.collidables = colls;
+    }
+
     move(x, y) {
-        // move the players location += this vector
-        this.xpos += x;
-        this.ypos += y;
+        let futureCol = false;
+        let futurePosX = this.xpos + x;
+        let futurePosY = this.ypos + y;
+
+        let playerBounds = [futurePosX, futurePosY, this.swidth, this.sheight];
+
+        // check collisions
+        // XXX: replace this dumb method (where no interpolation is done)
+        this.gameState.collidableReference.forEach((el, index) => {
+            el = this.gameState.elements[el];
+            if (rectsIntersect(playerBounds, el["bounds"])) {
+                console.log('collision');
+                futureCol = true;
+            }
+        });
+
+        if (!futureCol) {
+            // move the players location += this vector
+            this.xpos = futurePosX;
+            this.ypos = futurePosY;
+        }
     }
 }

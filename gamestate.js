@@ -13,7 +13,7 @@ class GameState {
         // stores the index that animated objects reside in
         this.animatedReference = [];
 
-        this.player = new Player(50, 50);
+        this.player = new Player(50, 50, this);
 
 
         // because events are dumb, we store the event keypress in an array
@@ -26,8 +26,10 @@ class GameState {
 		this.canvas.addEventListener('click', (event) => {this.clickHandler(event); }, false);
 		// document compared to canvas, as the canvas will not have focus, probably.
 		// if we were to embed this in a scrollable, I suppose I should set tabindex, so make it focus, and instead use canvas
-		document.addEventListener('keydown', (event) => {this.keys[event.keyCode] = true; }, false);
+		document.addEventListener('keydown', (event) => { this.keys[event.keyCode] = true; }, false);
 		document.addEventListener('keyup', (event) => {this.keys[event.keyCode] = false; }, false);
+        // bug where if lost focus, character kept moving
+        document.addEventListener('blur', (event) => {this.keys.forEach((_, index) => { this.keys[index] = false; });});
 
         canvas.addEventListener('mousemove', (event) => {this.mouseMoveHandler(event); }, false);
 
@@ -59,6 +61,7 @@ class GameState {
 		this.elements = Scenes[menu];
         this.clickableReference = [];
         this.animatedReference = [];
+        this.collidableReference = [];
         
         // TODO: replace with a better way of injecting elements
         if (this.screenState === "gameplay") {
@@ -85,10 +88,13 @@ class GameState {
                 }
 
                 if ("onclick" in el) {
-                    if (!("bounds" in el)) throw "clickable object without bounding box";
+                    //if (!("bounds" in el)) throw "clickable object without bounding box";
                     this.clickableReference.push(index);
                 }
 
+                if (el["oncollide"]) {
+                    this.collidableReference.push(index);
+                }
             });
 	}
 
@@ -151,10 +157,23 @@ class GameState {
                 // ignore removed elements
                 if (ind === null) return;
                 let el = this.elements[ind];
-                if (el === null) return;
-                let bounds = el["bounds"];
-                if (x >= bounds[0] && x <= bounds[0] + bounds[2] &&
-                    y >= bounds[1] && y <= bounds[1] + bounds[3]) {
+                if (!el) return;
+                // some bounded elements may not necessarily be clickable
+                if (!el["onclick"]) return;
+
+                let bounds = null;
+                // if bounds are available, use them, otherwise use the default height/width
+                // and x,y positions
+                // TODO: should we populate this when loading the scene? may improve performance
+                if (el["bounds"]) { 
+                    bounds = el["bounds"];
+                } else {
+                    let elX = el["pos"][0];
+                    let elY = el["pos"][1];
+                    bounds = [elX, elY, el["width"], el["height"]];
+                }
+
+                if (pointInRect(x, y, bounds[0], bounds[1], bounds[2], bounds[3])) {
                     el["onclick"](el, this);
                 }
             });
@@ -171,6 +190,8 @@ class GameState {
     deleteObj(obj) {
         let ind = obj["index"];
 
+        // TODO: refactor down to not violate DRY
+
         // search through the animated references and nullify them
         if ("anim" in obj) {
             this.animatedReference.forEach(
@@ -186,6 +207,15 @@ class GameState {
                 (v, i) => {
                     if (v === ind) {
                         this.clickableReference[i] = null;
+                    }
+                });
+        }
+
+        if ("oncollide" in obj) {
+            this.collidableReference.forEach(
+                (v, i) => {
+                    if (v == ind) {
+                        this.collidableReference[i] = null;
                     }
                 });
         }
