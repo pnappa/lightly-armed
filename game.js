@@ -9,6 +9,21 @@
  *	    - death by a thousand cuts - convert the string comparison to defines (i.e. define scenes by constants/enums)
  *	    - fix the _draw fn such that it doesn't abuse ctx.save and ctx.restore 
  *	        - this was previously used to allow rotation.. but there is a better way. refer to player.js
+ * Next:
+ *	- Capture right click and implement dashing
+ *	- Implement cooldowns
+ *	- Implement powerups
+ *	    - projectiles? like a rocket launcher
+ *	    - speed up
+ *	    - longer dash
+ *	    - temporary shield
+ *	    - extra life
+ *	- Implement level dangers
+ *	    - predfined moving lasers
+ *	- Do level maps that contain walls, powerup spawns etc
+ *	- Write the server to relay player positional data
+ *	    - Server should simulate game
+ *	    - Maybe not, its a lot of effort - let's just trust the players?
  */
 
 

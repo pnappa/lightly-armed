@@ -2,7 +2,7 @@
 var title_text = new Image();
 title_text.src = "resources/title_text.svg";
 
-var CHAR_SPEED = 100;
+var CHAR_SPEED = 200;
 
 var RESOURCES = {
 	"title_text": title_text,

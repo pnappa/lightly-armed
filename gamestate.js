@@ -23,7 +23,7 @@ class GameState {
         this.mousePos = null;
         
 		// allow us to emulate mouse interactions
-		this.canvas.addEventListener('click', (event) => {this.clickHandler(event); }, false);
+		this.canvas.addEventListener('mousedown', (event) => {this.clickHandler(event); }, false);
 		// document compared to canvas, as the canvas will not have focus, probably.
 		// if we were to embed this in a scrollable, I suppose I should set tabindex, so make it focus, and instead use canvas
 		document.addEventListener('keydown', (event) => { this.keys[event.keyCode] = true; }, false);
