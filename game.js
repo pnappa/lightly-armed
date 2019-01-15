@@ -15,6 +15,7 @@
  *
  * Next:
  *  - Make collision detection interpolate, and not prevent movement
+ *  - Make laser continue until a blocking object, not just until the mouse
  *	- Implement cooldowns
  *	    - dashing
  *	    - firing laser
@@ -32,6 +33,7 @@
  *	- Write the server to relay player positional data
  *	    - Server should simulate game
  *	    - Maybe not, its a lot of effort - let's just trust the players?
+ *	    - seeing as we're trusting, why not WebRTC?
  */
 
 
@@ -61,16 +63,20 @@ function loadMaps() {
     const startX = 0;
     // maps start from y = 30, as the menu bar occupies the top 30 pixels
     const startY = 30;
-    const Wall = {
-        "type": "shape",
-        "shape": "rect",
-        "zlevel": 70,
-        "pos": [null, null],
-        "width": wallWidth,
-        "height": wallHeight,
-        "colour": "green",
-        "oncollide": () => {}
-    };
+
+    // TODO: move into separate file..?
+    const Tiles = {
+        '1': {
+            "type": "shape",
+            "shape": "rect",
+            "zlevel": 70,
+            "pos": [null, null],
+            "width": wallWidth,
+            "height": wallHeight,
+            "colour": "green",
+            "oncollide": () => {}
+        }
+    }
 
     function generateMap(fileName) {
         function parseMap(mapText) {
@@ -79,9 +85,10 @@ function loadMaps() {
             console.log(rows);
             rows.forEach((row, rowNum) => {
                 row.split(',').forEach((col, colNum) => {
-                    if (col == '1') {
+                    // is there an object for this kind of tile?
+                    if (col in Tiles) {
                         // shallow copy wall
-                        let cWall = Object.assign({}, Wall);
+                        let cWall = Object.assign({}, Tiles[col]);
                         cWall.pos = [colNum*wallWidth, startY + rowNum*wallHeight];
                         builtMap.push(cWall);
                     }
