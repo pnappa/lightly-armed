@@ -64,6 +64,14 @@ class Player {
         // draw laser below player
         if (this.laser) this.laser.draw(ctx, renderer);
 
+        // draw bounding box
+        renderer.drawRect({
+            "pos": [this.xpos, this.ypos],
+            "width": this.swidth,
+            "height": this.sheight,
+            "colour": "rgba(0, 255, 0, 0.6)"
+        });
+
         // the rotation code was from stack overflow ... TODO: attribute
         // radians var
         let rad = this.rotation;
@@ -226,16 +234,26 @@ class Player {
 
             // hit from the side
             if (firstCollision.propDist === firstCollision.xProp) {
-                let estVel = firstCollision.xProp * this.xvel * dt;
-                this.xpos += estVel;
+                let estVel = firstCollision.xProp * this.xvel;
+                this.xpos += estVel * dt;
                 this.ypos += this.yvel * dt;
                 this.xvel = 0;
             } else if (firstCollision.propDist === firstCollision.yProp) {
-                let estVel = firstCollision.yProp * this.yvel * dt;
-                this.ypos += estVel;
+                let estVel = firstCollision.yProp * this.yvel;
+                this.ypos += estVel * dt;
                 this.xpos += this.xvel * dt;
                 this.yvel = 0;
             }
+
+            // XXX: temp, just testing
+            this.gameState.collidableReference.forEach((el, index) => {
+                let playerBounds = [this.xpos, this.ypos, this.swidth, this.sheight];
+                el = this.gameState.elements[el];
+                let elBounds = getBounds(el);
+                if (rectsIntersect(playerBounds, elBounds)) {
+                    console.log(firstCollision, el);
+                }
+            });
         }
 
         // apply friction, add -ve vector * friction scalar

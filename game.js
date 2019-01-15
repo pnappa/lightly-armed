@@ -90,6 +90,8 @@ function loadMaps() {
                         // shallow copy wall
                         let cWall = Object.assign({}, Tiles[col]);
                         cWall.pos = [colNum*wallWidth, startY + rowNum*wallHeight];
+                        // XXX: temp assign random colour to walls
+                        cWall.colour = colToRgbaStr([Math.random()*255, Math.random()*255, Math.random()*255, 1]);
                         builtMap.push(cWall);
                     }
                 });
