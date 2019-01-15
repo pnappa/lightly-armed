@@ -152,12 +152,35 @@ class Player {
         return Math.abs(this.xvel) < CHAR_SPEED/2 && Math.abs(this.yvel) < CHAR_SPEED/2 && this.isDashing;
     }
 
+    // return the number of pixels separating this character and the supplied bounding box
+    _xDistance(objBounds) {
+        // if coming from the left
+        if (this.xvel > 0) {
+            // leftmost point of rect minus rightmost point of plyaer
+            return objBounds[0] - (this.xpos + this.swidth);
+        } else {
+            // coming from the right
+            // left point of player minus rightmost point
+            return this.xpos - (objBounds[0] + objBounds[2]);
+        }
+    }
+
+    _yDistance(objBounds) {
+        // coming from the top 
+        if (this.yvel > 0) {
+            return objBounds[1] - (this.ypos + this.sheight);
+        } else {
+            // from the bottom
+            return this.ypos - (objBounds[1] + objBounds[3]);
+        }
+    }
+
     // handle all movements, and collisions
     update(dt) {
         if (this.laser) this.laser.update(dt);
+        if (this.finishedDashing()) this.isDashing = false;
         // nothing to do for a stationary player
         if (isZero(this.xvel) && isZero(this.yvel)) return;
-
 
         // find all objects the player will hit if travelling that distance
 
@@ -185,81 +208,84 @@ class Player {
             this.xpos = futurePosX;
             this.ypos = futurePosY;
         } else {
-            // find closest object, based on the percentage of the distance by the velocity vector
-            // XXX: this assumes rectangles
-            const INFDIST = 1e9;
-            let firstCollision = {propDist: INFDIST, obj: null, xProp: null, yProp: null};
 
-            futureCollisions.forEach((el) => {
-                let objBounds = getBounds(el);
-                let xDist = null;
-                let yDist = null;
-                let proportionalXDist = INFDIST;
-                let proportionalYDist = INFDIST;
+            function getFirstCollision(player) {
+                // find closest object, based on the percentage of the distance by the velocity vector
+                // XXX: this assumes rectangles
+                const INFDIST = 1e9;
+                let firstCollision = {propDist: INFDIST, obj: null, xProp: null, yProp: null};
 
-                // if coming from the left
-                if (this.xvel > 0) {
-                    // leftmost point of rect minus rightmost point of plyaer
-                    xDist = objBounds[0] - (this.xpos + this.swidth);
-                } else {
-                    // coming from the right
-                    // left point of player minus rightmost point
-                    xDist = this.xpos - (objBounds[0] + objBounds[2]);
-                }
-                if (xDist > 0) {
-                    // what percentage of the xvel vector we are away
+                futureCollisions.forEach((el) => {
+                    let objBounds = getBounds(el);
+                    let xDist = null;
+                    let yDist = null;
+                    // what percentage of the xvel vector we are away this frame
                     // 1 == further, 0 == already touching
-                    proportionalXDist = xDist/(Math.abs(this.xvel));
-                }
+                    let proportionalXDist = INFDIST;
+                    let proportionalYDist = INFDIST;
 
-                // coming from the top 
-                if (this.yvel > 0) {
-                    yDist = objBounds[1] - (this.ypos + this.sheight);
-                } else {
-                    // from the bottom
-                    yDist = this.ypos - (objBounds[1] + objBounds[3]);
-                }
-                if (yDist > 0) {
-                    // what percentage of the yvel vector we are away
-                    // 1 == further, 0 == already touching
-                    proportionalYDist = yDist/(Math.abs(this.yvel));
-                }
+                    xDist = player._xDistance(objBounds);
+                    if (xDist > 0) proportionalXDist = xDist/(Math.abs(player.xvel)*dt);
+                    yDist = player._yDistance(objBounds);
+                    if (yDist > 0) proportionalYDist = yDist/(Math.abs(player.yvel)*dt);
 
-                if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
-                    firstCollision = {propDist: Math.min(proportionalXDist, proportionalYDist), obj: el, xProp: proportionalXDist, yProp: proportionalYDist};
-                }
-            });
+                    if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
+                        firstCollision = {propDist: Math.min(proportionalXDist, proportionalYDist), obj: el, xProp: proportionalXDist, yProp: proportionalYDist};
+                    }
+                });
 
-            //console.log(firstCollision.propDist);
-
-            // hit from the side
-            if (firstCollision.propDist === firstCollision.xProp) {
-                let estVel = firstCollision.xProp * this.xvel;
-                this.xpos += estVel * dt;
-                this.ypos += this.yvel * dt;
-                this.xvel = 0;
-            } else if (firstCollision.propDist === firstCollision.yProp) {
-                let estVel = firstCollision.yProp * this.yvel;
-                this.ypos += estVel * dt;
-                this.xpos += this.xvel * dt;
-                this.yvel = 0;
+                return firstCollision;
             }
 
-            // XXX: temp, just testing
+            let firstCollision = getFirstCollision(this);
+
             this.gameState.collidableReference.forEach((el, index) => {
-                let playerBounds = [this.xpos, this.ypos, this.swidth, this.sheight];
+                let playerBounds = [this.posx, this.posy, this.swidth, this.sheight];
                 el = this.gameState.elements[el];
                 let elBounds = getBounds(el);
                 if (rectsIntersect(playerBounds, elBounds)) {
-                    console.log(firstCollision, el);
+                    throw new Error('uhm');
                 }
             });
+
+            // XXX: ok, i think I know the bug in this one.
+            // the problem is that if the first collision is resolved, the velocity is still
+            // set in the other axis, which may cause a collision with another/same object.
+            // setting it to 0 is lame, and a cop-out. So, what I think has to happen is
+            // when we update the first colliding axis, we then test whether if the other axis
+            // continues unabated, whether it collides with another object, and resolve then.
+            
+            // hit from the side
+            if (firstCollision.propDist === firstCollision.xProp) {
+                let estDist = firstCollision.xProp * this.xvel;
+                this.xpos += (estDist - (Math.sign(this.xvel)*epsilon)) * dt;
+                this.xvel = 0;
+            } else if (firstCollision.propDist === firstCollision.yProp) {
+                let estDist = firstCollision.yProp * this.yvel;
+                this.ypos += (estDist - (Math.sign(this.yvel)*epsilon)) * dt;
+                this.yvel = 0;
+            }
+
+            // then, do the same thing for the remaining axis
+            firstCollision = getFirstCollision(this);
+
+            // we then test whether if the other axis
+            // continues unabated, whether it collides with another object, and resolve then.
+            
+            // hit from the side
+            if (firstCollision.propDist === firstCollision.xProp) {
+                let estDist = firstCollision.xProp * this.xvel;
+                this.xpos += (estDist - (Math.sign(this.xvel)*epsilon)) * dt;
+            } else if (firstCollision.propDist === firstCollision.yProp) {
+                let estDist = firstCollision.yProp * this.yvel;
+                this.ypos += (estDist - (Math.sign(this.yvel)*epsilon)) * dt;
+            }
+
         }
 
         // apply friction, add -ve vector * friction scalar
         this.xvel += -FRICTION * this.xvel * dt;
         this.yvel += -FRICTION * this.yvel * dt;
 
-        if (this.finishedDashing()) this.isDashing = false;
     }
 }
