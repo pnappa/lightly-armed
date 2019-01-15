@@ -177,70 +177,62 @@ class Player {
             this.xpos = futurePosX;
             this.ypos = futurePosY;
         } else {
-            // find closest object for each X and Y, proportional that vector
+            // find closest object, based on the percentage of the distance by the velocity vector
             // XXX: this assumes rectangles
             const INFDIST = 1e9;
-            let firstXCollision = {dist: INFDIST, obj: null};
-            let firstYCollision = {dist: INFDIST, obj: null};
+            let firstCollision = {propDist: INFDIST, obj: null, xProp: null, yProp: null};
 
             futureCollisions.forEach((el) => {
                 let objBounds = getBounds(el);
                 let xDist = null;
                 let yDist = null;
+                let proportionalXDist = INFDIST;
+                let proportionalYDist = INFDIST;
 
-                // if we only move x-wise, will this collide?
-                let xPlaneCollision = rectsIntersect([playerBounds[0], this.ypos, playerBounds[2], playerBounds[3]], objBounds);
-                // if we only move y-wise, will this collide?
-                let yPlaneCollision = rectsIntersect([this.xpos, playerBounds[1], playerBounds[2], playerBounds[3]], objBounds);
-
-                // if neither, or both, it means this one relies on x & y movement for collison.
-
-                if (xPlaneCollision || !yPlaneCollision) {
-
-                    // if coming from the left
-                    if (this.xvel > 0) {
-                        // leftmost point of rect minus rightmost point of plyaer
-                        xDist = objBounds[0] - (this.xpos + this.swidth);
-                    } else {
-                        // coming from the right
-                        // left point of player minus rightmost point
-                        xDist = this.xpos - (objBounds[0] + objBounds[2]);
-                    }
-                        // what percentage of the xvel vector we are away
-                        // 1 == further, 0 == already touching
-                        let proportionalDistance = xDist/(this.xvel*dt);
-                        if (proportionalDistance < firstXCollision.dist) {
-                            firstXCollision.dist = proportionalDistance;
-                            firstXCollision.obj = el;
-                        }
+                // if coming from the left
+                if (this.xvel > 0) {
+                    // leftmost point of rect minus rightmost point of plyaer
+                    xDist = objBounds[0] - (this.xpos + this.swidth);
+                } else {
+                    // coming from the right
+                    // left point of player minus rightmost point
+                    xDist = this.xpos - (objBounds[0] + objBounds[2]);
+                }
+                if (xDist > 0) {
+                    // what percentage of the xvel vector we are away
+                    // 1 == further, 0 == already touching
+                    proportionalXDist = xDist/(Math.sign(this.xvel)*this.xvel*dt);
                 }
 
-                if (yPlaneCollision || !xPlaneCollision) {
-                    // coming from the top 
-                    if (this.yvel > 0) {
-                        yDist = objBounds[1] - (this.ypos + this.sheight);
-                    } else {
-                        // from the bottom
-                        yDist = this.ypos - (objBounds[1] + objBounds[3]);
-                    }
-                        // what percentage of the yvel vector we are away
-                        // 1 == further, 0 == already touching
-                        let proportionalDistance = yDist/(this.yvel*dt);
-                        if (proportionalDistance < firstYCollision.dist) {
-                            firstYCollision.dist = proportionalDistance;
-                            firstYCollision.obj = el;
-                        }
+                // coming from the top 
+                if (this.yvel > 0) {
+                    yDist = objBounds[1] - (this.ypos + this.sheight);
+                } else {
+                    // from the bottom
+                    yDist = this.ypos - (objBounds[1] + objBounds[3]);
+                }
+                if (yDist > 0) {
+                    // what percentage of the yvel vector we are away
+                    // 1 == further, 0 == already touching
+                    let proportionalYDist = yDist/(Math.sign(this.yvel)*this.yvel*dt);
+                }
+
+                if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
+                    firstCollision = {propDist: Math.min(proportionalXDist, proportionalYDist), obj: el, xProp: proportionalXDist, yProp: proportionalYDist};
                 }
             });
 
-            // then, move X and Y, and reset xvel and yvel if those axes would have hit
-            if (firstYCollision.obj) {
-                this.ypos += this.yvel * firstYCollision.dist * dt;
-                this.yvel = 0;
-            }
-            if (firstXCollision.obj) {
-                this.xpos += this.xvel * firstXCollision.dist * dt;
+            // hit from the side
+            if (firstCollision.propDist === firstCollision.xProp) {
+                let estVel = firstCollision.xProp * (this.xvel*dt) * dt;
+                this.xpos += estVel;
+                this.ypos += this.yvel * dt;
                 this.xvel = 0;
+            } else if (firstCollision.propDist === firstCollision.yProp) {
+                let estVel = firstCollision.yProp * (this.yvel*dt) * dt;
+                this.ypos += estVel;
+                this.xpos += this.xvel * dt;
+                this.yvel = 0;
             }
         }
 

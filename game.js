@@ -113,9 +113,9 @@ function loadMaps() {
 function init() {
 	ctx.imageSmoothingEnabled = true;
     loadMaps();
-    gameState.setScreen("main_menu");
+    //gameState.setScreen("main_menu");
     // XXX: temporary, speed up testing game mode
-    //gameState.setScreen("gameplay");
+	gameState.setScreen("gameplay");
 	var oldTime = Date.now();
 }
 
