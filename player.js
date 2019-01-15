@@ -94,7 +94,6 @@ class Player {
         // TODO: add cooldown, and check
         // XXX: don't fire laser if we already have one..?
         if (this.laser) return;
-        console.log('firing muh laz0r');
 
         // TODO: fire at eye location, rather than center of character?
         this.laser = new Laser(this, [this.xpos + this.swidth/2, this.ypos + this.sheight/2], [x, y]);
@@ -221,7 +220,7 @@ class Player {
                     let xDist = null;
                     let yDist = null;
                     // what percentage of the xvel vector we are away this frame
-                    // 1 == further, 0 == already touching
+                    // 1 == furthest, 0 == already touching
                     let proportionalXDist = INFDIST;
                     let proportionalYDist = INFDIST;
 
@@ -242,10 +241,12 @@ class Player {
 
             // hit from the side
             if (firstCollision.propDist === firstCollision.xProp) {
+                //console.log('side1');
                 let estDist = firstCollision.xProp * this.xvel;
                 this.xpos += (estDist - (Math.sign(this.xvel)*epsilon)) * dt;
                 this.xvel = 0;
             } else if (firstCollision.propDist === firstCollision.yProp) {
+                //console.log('top1');
                 let estDist = firstCollision.yProp * this.yvel;
                 this.ypos += (estDist - (Math.sign(this.yvel)*epsilon)) * dt;
                 this.yvel = 0;
@@ -259,12 +260,15 @@ class Player {
             
             // hit from the side
             if (firstCollision.propDist === firstCollision.xProp) {
+                //console.log('side2');
                 let estDist = firstCollision.xProp * this.xvel;
                 this.xpos += (estDist - (Math.sign(this.xvel)*epsilon)) * dt;
             } else if (firstCollision.propDist === firstCollision.yProp) {
+                //console.log('top2');
                 let estDist = firstCollision.yProp * this.yvel;
                 this.ypos += (estDist - (Math.sign(this.yvel)*epsilon)) * dt;
             } else {
+                //console.log('else');
                 // no collision remaining
                 this.xpos += this.xvel*dt; 
                 this.ypos += this.yvel*dt; 

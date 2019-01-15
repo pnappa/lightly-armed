@@ -26,7 +26,10 @@ class GameState {
 		this.canvas.addEventListener('mousedown', (event) => {this.clickHandler(event); }, false);
 		// document compared to canvas, as the canvas will not have focus, probably.
 		// if we were to embed this in a scrollable, I suppose I should set tabindex, so make it focus, and instead use canvas
-		document.addEventListener('keydown', (event) => { this.keys[event.keyCode] = true; }, false);
+		document.addEventListener('keydown', (event) => { 
+            // set a date for the keys, so we can check most recent
+            this.keys[event.keyCode] = new Date(); 
+        }, false);
 		document.addEventListener('keyup', (event) => {this.keys[event.keyCode] = false; }, false);
         // bug where if lost focus, character kept moving
         document.addEventListener('blur', (event) => {this.keys.forEach((_, index) => { this.keys[index] = false; });});
@@ -123,13 +126,13 @@ class GameState {
             // TODO: make this such that the most recent key overrides the opposite
             // s.t. if w is pressed, then s is pressed, we should move down, not stay still
             // w
-            if (this.keys[87]) this.player.playerAddVel(0, -CHAR_SPEED); 
+            if (this.keys[87] && (!this.keys[83] || this.keys[87] > this.keys[83])) this.player.playerAddVel(0, -CHAR_SPEED); 
             // a 
-            if (this.keys[65]) this.player.playerAddVel(-CHAR_SPEED, 0);
+            if (this.keys[65] && (!this.keys[68] || this.keys[65] > this.keys[68])) this.player.playerAddVel(-CHAR_SPEED, 0); 
             // s
-            if (this.keys[83]) this.player.playerAddVel(0, CHAR_SPEED); 
+            if (this.keys[83] && (!this.keys[87] || this.keys[83] > this.keys[87])) this.player.playerAddVel(0, CHAR_SPEED); 
             // d
-            if (this.keys[68]) this.player.playerAddVel(CHAR_SPEED, 0); 
+            if (this.keys[68] && (!this.keys[65] || this.keys[68] > this.keys[65])) this.player.playerAddVel(CHAR_SPEED, 0); 
 
             // update character to look at the last-known position of the mouse cursor
             if (this.mousePos != null) this.player.lookTowards(this.mousePos.x, this.mousePos.y);
