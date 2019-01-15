@@ -27,6 +27,8 @@
  *	- Implement level dangers
  *	    - predfined moving lasers
  *	- Do level maps that contain walls, powerup spawns etc
+ *	    - Condense map mesh s.t. connecting walls will be made into a single shape
+ *	        - this reduces collision detection cost
  *	- Write the server to relay player positional data
  *	    - Server should simulate game
  *	    - Maybe not, its a lot of effort - let's just trust the players?
@@ -56,6 +58,9 @@ function loadMaps() {
     // just a basic bitch wall object
     const wallWidth = 30;
     const wallHeight = 30;
+    const startX = 0;
+    // maps start from y = 30, as the menu bar occupies the top 30 pixels
+    const startY = 30;
     const Wall = {
         "type": "shape",
         "shape": "rect",
@@ -63,35 +68,32 @@ function loadMaps() {
         "pos": [null, null],
         "width": wallWidth,
         "height": wallHeight,
-        "colour": "green"
+        "colour": "green",
+        "oncollide": () => {}
     };
 
     function generateMap(fileName) {
         function parseMap(mapText) {
             let builtMap = [];
-            console.log(mapText);
-            let rows = mapText.split('\n');
+            let rows = mapText.trim().split('\n');
+            console.log(rows);
             rows.forEach((row, rowNum) => {
                 row.split(',').forEach((col, colNum) => {
-                    // shallow copy wall
-                    let cWall = Object.assign({}, Wall);
-                    cWall.pos = [col*wallWidth, row*wallHeight];
-                    builtMap.push(cWall);
+                    if (col == '1') {
+                        // shallow copy wall
+                        let cWall = Object.assign({}, Wall);
+                        cWall.pos = [colNum*wallWidth, startY + rowNum*wallHeight];
+                        builtMap.push(cWall);
+                    }
                 });
             });
             return builtMap;
         }
 
         var file = new XMLHttpRequest();
-        file.open("GET", fileName, true);
-        file.onreadystatechange = () => {
-            if (file.readyState === 4) {
-                if (file.status === 200 || file.status === 0) {
-                    parseMap(file.responseText);
-                }
-            }
-        }
+        file.open("GET", fileName, false);
         file.send();
+        return parseMap(file.responseText);
     };
 
     for (let mapName in MapFiles) {

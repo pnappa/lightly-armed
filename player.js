@@ -48,8 +48,8 @@ class Player {
         this.gameState = gs;
 
         // player sprite and properties
-        this.swidth = 30;
-        this.sheight = 30;
+        this.swidth = 20;
+        this.sheight = 20;
 
         this.xvel = 0;
         this.yvel = 0;

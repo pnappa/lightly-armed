@@ -65,6 +65,11 @@ class GameState {
         // TODO: replace with a better way of injecting elements
         if (this.screenState === "gameplay") {
             this.elements.push(this.player);
+            // load a map
+            // XXX: for now, just use map1 always 
+            Maps["map1"].forEach((el) => {
+                this.elements.push(el);
+            });
         }
 
         // sort by zlevel

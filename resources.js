@@ -33,7 +33,6 @@ var RESOURCES = {
         "width": 20,
         "height": 20,
         "id": "" 
-
     }
 }
 
@@ -319,19 +318,6 @@ var Scenes = {
             "colour": "black",
             // player shouldn't be able to move into the menubar
             "oncollide": () => {}
-        },
-
-        // walls (above player)
-        {
-            "zlevel": 70,
-            "type": "shape",
-            "shape": "rect",
-            "pos": [100, 50],
-            "width": 50,
-            "height": 50,
-            "colour": "black",
-            // when colliding with this object?
-            "oncollide": () => { }
         },
          
         // restrict player within view
