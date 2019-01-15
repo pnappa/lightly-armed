@@ -28,6 +28,8 @@
 
 
 var cvs = document.getElementById("game");
+// prevent right click menu coming up in the canvas
+cvs.oncontextmenu = (e) => { e.preventDefault(); }
 var ctx = cvs.getContext("2d");
 var gameState = new GameState(cvs, ctx);
 var renderer = new Renderer(ctx, gameState);

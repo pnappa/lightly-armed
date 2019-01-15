@@ -13,6 +13,9 @@ class Player {
         this.swidth = 30;
         this.sheight = 30;
 
+        this.xvel = 0;
+        this.yvel = 0;
+
         this.img = new Image();
         this.img.src = "resources/player.svg";
 
@@ -63,14 +66,40 @@ class Player {
         this.rotation = Math.atan2(yOffset, xOffset);
     }
 
-    setCollidables(colls) {
-        this.collidables = colls;
+    setXVel(x) {
+        this.xvel = x;
+    }
+    
+    setYVel(y) {
+        this.yvel = y;
     }
 
-    move(x, y) {
+    // add dash velocity to this position
+    dashTo(x, y) {
+        console.log("dashing to: ", x, " ", y);
+
+        let xDashVec = (x - (this.xpos + this.swidth/2));
+        let yDashVec = (y - (this.ypos + this.sheight/2));
+
+        // convert s.t. |x + y| = 1
+        let shrinkage = Math.sqrt(xDashVec*xDashVec + yDashVec*yDashVec);
+        xDashVec /= shrinkage;
+        yDashVec /= shrinkage;
+
+        // then multiply by DASH_POWER to set dash vel
+        this.xvel = xDashVec * DASH_POWER;
+        this.yvel = yDashVec * DASH_POWER;
+    }
+
+    // handle all movements, and collisions
+    update(dt) {
+        // nothing to do for a stationary player
+        if (isZero(this.xvel) && isZero(this.yvel)) return;
+
+        // XXX: very basic collision detection/resolution, probably should replace
         let futureCol = false;
-        let futurePosX = this.xpos + x;
-        let futurePosY = this.ypos + y;
+        let futurePosX = this.xpos + this.xvel * dt;
+        let futurePosY = this.ypos + this.yvel * dt;
 
         let playerBounds = [futurePosX, futurePosY, this.swidth, this.sheight];
 
@@ -82,7 +111,6 @@ class Player {
         this.gameState.collidableReference.forEach((el, index) => {
             el = this.gameState.elements[el];
             if (rectsIntersect(playerBounds, getBounds(el))) {
-                console.log('collision');
                 futureCol = true;
             }
         });
@@ -91,6 +119,20 @@ class Player {
             // move the players location += this vector
             this.xpos = futurePosX;
             this.ypos = futurePosY;
+        } else {
+            // XXX: currently set both velocities to 0, might just change the only impacting one?
+            // like, if I am travelling up and to the right, but I hit an object to my right
+            // i should still have my vertical vel?
+            this.xvel = 0;
+            this.yvel = 0;
         }
+
+        // apply friction, add -ve vector * friction scalar
+        this.xvel += -FRICTION * this.xvel * dt;
+        this.yvel += -FRICTION * this.yvel * dt;
+
+        // clamp to avoid perpetually moving object
+        if (Math.abs(this.xvel) < 0.05) this.xvel = 0;
+        if (Math.abs(this.yvel) < 0.05) this.yvel = 0;
     }
 }

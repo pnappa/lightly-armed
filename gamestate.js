@@ -116,18 +116,24 @@ class GameState {
             });
 
         if (this.screenState === "gameplay" && this.player != null) {
+            // TODO: make this such that the most recent key overrides the opposite
+            // s.t. if w is pressed, then s is pressed, we should move down, not stay still
             // w
-            if (this.keys[87]) this.player.move(0, -CHAR_SPEED * dt); 
+            if (this.keys[87]) this.player.setYVel(-CHAR_SPEED); 
             // a 
-            if (this.keys[65]) this.player.move(-CHAR_SPEED * dt, 0); 
+            if (this.keys[65]) this.player.setXVel(-CHAR_SPEED);
             // s
-            if (this.keys[83]) this.player.move(0, CHAR_SPEED * dt); 
+            if (this.keys[83]) this.player.setYVel(CHAR_SPEED); 
             // d
-            if (this.keys[68]) this.player.move(CHAR_SPEED * dt, 0); 
+            if (this.keys[68]) this.player.setXVel(CHAR_SPEED); 
 
             // update character to look at the last-known position of the mouse cursor
             if (this.mousePos != null) this.player.lookTowards(this.mousePos.x, this.mousePos.y);
+
+            this.player.update(dt);
         }
+
+        
 	}
 
 	getDraws() {
@@ -151,33 +157,45 @@ class GameState {
 
 		var x = event.pageX - this.leftOffset;
 		var y = event.pageY - this.topOffset;
-        
-        // XXX: i moved this up here because if we moved towards the gameplay, it meant that
-        // we fired a laser. moving it up here is still gonna cause problems, but
-        // we're not facing them now, so let's deal with that in the future.
-		// handle the clicks designed for game playing
-		if (this.screenState === "gameplay") {
-			//TODO: handle mouse clicks with respect to where they will be placed
 
-            // lets just fire a line, 
-            this.player.fireLaser(x,y);
-		}
+        // TODO: cleanup, use a design pattern here imo
+        const lmb = 0;
+        const rmb = 2;
+        let isLeftClick = event.button === lmb;
+        let isRightClick = event.button === rmb;
 
-        this.clickableReference.forEach(
-            (ind) => {
-                // ignore removed elements
-                if (ind === null) return;
-                let el = this.elements[ind];
-                if (!el) return;
-                // some bounded elements may not necessarily be clickable
-                if (!el["onclick"]) return;
+        if (isLeftClick) {
+            // XXX: i moved this up here because if we moved towards the gameplay, it meant that
+            // we fired a laser. moving it up here is still gonna cause problems, but
+            // we're not facing them now, so let's deal with that in the future.
+            // handle the clicks designed for game playing
+            if (this.screenState === "gameplay") {
+                //TODO: handle mouse clicks with respect to where they will be placed
 
-                let bounds = getBounds(el);
+                // lets just fire a line, 
+                this.player.fireLaser(x,y);
+            }
 
-                if (pointInRect(x, y, bounds[0], bounds[1], bounds[2], bounds[3])) {
-                    el["onclick"](el, this);
-                }
-            });
+            this.clickableReference.forEach(
+                (ind) => {
+                    // ignore removed elements
+                    if (ind === null) return;
+                    let el = this.elements[ind];
+                    if (!el) return;
+                    // some bounded elements may not necessarily be clickable
+                    if (!el["onclick"]) return;
+
+                    let bounds = getBounds(el);
+
+                    if (pointInRect(x, y, bounds[0], bounds[1], bounds[2], bounds[3])) {
+                        el["onclick"](el, this);
+                    }
+                });
+        } else if (isRightClick) {
+            if (this.screenState === "gameplay") {
+                this.player.dashTo(x, y);
+            }
+        }
 
 	}
 

@@ -1,4 +1,5 @@
 
+const epsilon = 0.01;
 
 function pointInRect(pX, pY, rX, rY, rW, rH) {
     return (pX >= rX && pX <= rX + rW &&
@@ -23,4 +24,8 @@ function getBounds(obj) {
     }
 
     return bounds;
+}
+
+function isZero(x) {
+    return Math.abs(x) <= epsilon;
 }
