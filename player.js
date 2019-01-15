@@ -208,7 +208,8 @@ class Player {
             this.xpos = futurePosX;
             this.ypos = futurePosY;
         } else {
-
+            // TODO: add some iota test, that will stop people getting caught on tiles
+            // either this, or convert from tiles into meshes...
             function getFirstCollision(player) {
                 // find closest object, based on the percentage of the distance by the velocity vector
                 // XXX: this assumes rectangles
@@ -239,22 +240,6 @@ class Player {
 
             let firstCollision = getFirstCollision(this);
 
-            this.gameState.collidableReference.forEach((el, index) => {
-                let playerBounds = [this.posx, this.posy, this.swidth, this.sheight];
-                el = this.gameState.elements[el];
-                let elBounds = getBounds(el);
-                if (rectsIntersect(playerBounds, elBounds)) {
-                    throw new Error('uhm');
-                }
-            });
-
-            // XXX: ok, i think I know the bug in this one.
-            // the problem is that if the first collision is resolved, the velocity is still
-            // set in the other axis, which may cause a collision with another/same object.
-            // setting it to 0 is lame, and a cop-out. So, what I think has to happen is
-            // when we update the first colliding axis, we then test whether if the other axis
-            // continues unabated, whether it collides with another object, and resolve then.
-            
             // hit from the side
             if (firstCollision.propDist === firstCollision.xProp) {
                 let estDist = firstCollision.xProp * this.xvel;
@@ -279,13 +264,15 @@ class Player {
             } else if (firstCollision.propDist === firstCollision.yProp) {
                 let estDist = firstCollision.yProp * this.yvel;
                 this.ypos += (estDist - (Math.sign(this.yvel)*epsilon)) * dt;
+            } else {
+                // no collision remaining
+                this.xpos += this.xvel*dt; 
+                this.ypos += this.yvel*dt; 
             }
-
         }
 
         // apply friction, add -ve vector * friction scalar
         this.xvel += -FRICTION * this.xvel * dt;
         this.yvel += -FRICTION * this.yvel * dt;
-
     }
 }

@@ -12,9 +12,11 @@
  *
  * Bugs:
  *  - Dashing over extends past click point. Somehow calculate the required vel to not overextend
+ *  - Collision detection currently gets caught on things it shouldn't
+ *      - can get caught on corners of adjacent blocks
+ *
  *
  * Next:
- *  - Make collision detection interpolate, and not prevent movement
  *  - Make laser continue until a blocking object, not just until the mouse
  *	- Implement cooldowns
  *	    - dashing
