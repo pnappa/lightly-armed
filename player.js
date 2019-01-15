@@ -201,7 +201,7 @@ class Player {
                 if (xDist > 0) {
                     // what percentage of the xvel vector we are away
                     // 1 == further, 0 == already touching
-                    proportionalXDist = xDist/(Math.sign(this.xvel)*this.xvel*dt);
+                    proportionalXDist = xDist/(Math.abs(this.xvel));
                 }
 
                 // coming from the top 
@@ -214,7 +214,7 @@ class Player {
                 if (yDist > 0) {
                     // what percentage of the yvel vector we are away
                     // 1 == further, 0 == already touching
-                    let proportionalYDist = yDist/(Math.sign(this.yvel)*this.yvel*dt);
+                    proportionalYDist = yDist/(Math.abs(this.yvel));
                 }
 
                 if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
@@ -222,14 +222,16 @@ class Player {
                 }
             });
 
+            //console.log(firstCollision.propDist);
+
             // hit from the side
             if (firstCollision.propDist === firstCollision.xProp) {
-                let estVel = firstCollision.xProp * (this.xvel*dt) * dt;
+                let estVel = firstCollision.xProp * this.xvel * dt;
                 this.xpos += estVel;
                 this.ypos += this.yvel * dt;
                 this.xvel = 0;
             } else if (firstCollision.propDist === firstCollision.yProp) {
-                let estVel = firstCollision.yProp * (this.yvel*dt) * dt;
+                let estVel = firstCollision.yProp * this.yvel * dt;
                 this.ypos += estVel;
                 this.xpos += this.xvel * dt;
                 this.yvel = 0;
