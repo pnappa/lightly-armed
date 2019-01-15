@@ -7,6 +7,9 @@ const CHAR_SPEED = 200;
 const FRICTION = 20;
 // multiplicative scalar to dash speed
 const DASH_POWER = 2200;
+// how frequently we can fire a laser (in seconds)
+// XXX: this is a test for general cooldowns
+const DASH_INTERVAL = 1;
 
 var RESOURCES = {
 	"title_text": title_text,
@@ -21,20 +24,6 @@ var RESOURCES = {
         // how many seconds the object is alive for
         "startinglifetime": 0.3,
         "lifetime": 0.3,
-        // have to give it an id to differ it from the rest 
-        // make sure to set!
-        "id": "",
-        "anim": (obj, dt, gs) => {
-            // set opacity based on remaining time left
-            // TODO: remove, this is a bit hacky
-            obj.colour = "rgba(255, 0, 0, " + obj.lifetime/obj.startinglifetime + ")";
-            
-            // whether to remove oneself
-            obj.lifetime -= dt;
-            if (obj.lifetime <= 0) {
-                gs.deleteObj(obj);
-            }
-        }
     },
     "player": {
         "colour": "blue",

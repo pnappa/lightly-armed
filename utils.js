@@ -29,3 +29,7 @@ function getBounds(obj) {
 function isZero(x) {
     return Math.abs(x) <= epsilon;
 }
+
+function colToRgbaStr(col) {
+    return 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + col[3] + ')';
+}

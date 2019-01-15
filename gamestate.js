@@ -57,7 +57,6 @@ class GameState {
 	/* set the elements that should be drawn for this menu */
 	setScreen(menu) {
 		this.screenState = menu;
-        // TODO: clone by json.dumps & load (retcon: not sure why.. maybe its because I set the index?)
 		this.elements = Scenes[menu];
         this.clickableReference = [];
         this.animatedReference = [];

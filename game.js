@@ -9,7 +9,9 @@
  *	    - death by a thousand cuts - convert the string comparison to defines (i.e. define scenes by constants/enums)
  *	    - fix the _draw fn such that it doesn't abuse ctx.save and ctx.restore 
  *	        - this was previously used to allow rotation.. but there is a better way. refer to player.js
+ *
  * Next:
+ *  - Dashing to the top left while moving to the left looks janky, while dashing to the bottom right when moving to the right looks too fast, I think I missed a sign somewhere..?
  *	- Implement cooldowns
  *	    - dashing
  *	    - firing laser

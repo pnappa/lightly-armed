@@ -1,4 +1,44 @@
 
+class Laser {
+    constructor(player, startPos, endPos) {
+        // shallow clone
+        this.res = Object.assign({}, RESOURCES['ray_projectile']);
+        // set position 
+        // TODO: add cooldown, and check
+        // TODO: make this obj not the toppest z-level?
+
+        this.res["pos"] = [startPos, endPos];
+
+        this.player = player;
+
+        // rgba
+        this.colour = [255, 0, 0, 1];
+    }
+
+
+    draw(ctx, renderer) {
+        // XXX: this feels a bit hacky to call a private fn.
+        // but i wanna reuse shape drawing. perhaps let's refactor that out of _draw, and
+        // into helper fns for renderer? makes sense imo.
+        renderer._draw(this.res);
+    }
+
+    update(dt) {
+        // update its lifetime
+        this.res.lifetime -= dt;
+        if (this.res.lifetime <= 0) {
+            this.player.removeLaser();
+            return;
+        }
+
+        // set some opacity m8
+        this.colour[3] = this.res.lifetime/this.res.startinglifetime;
+
+        // set the colour to a canvas friendly str
+        this.res.colour = colToRgbaStr(this.colour);
+    }
+}
+
 class Player {
     constructor(x, y, gs) {
         // location of player in canvas
@@ -8,6 +48,8 @@ class Player {
         this.rotation = 0;
 
         this.isDashing = false;
+
+        this.laser = null;
 
         this.gameState = gs;
 
@@ -24,7 +66,10 @@ class Player {
         this.zlevel = 50;
     }
 
-    draw(ctx) {
+    draw(ctx, renderer) {
+        // draw laser below player
+        if (this.laser) this.laser.draw(ctx, renderer);
+
         // the rotation code was from stack overflow ... TODO: attribute
         // radians var
         let rad = this.rotation;
@@ -44,19 +89,16 @@ class Player {
     }
 
     fireLaser(x, y) {
+        // XXX: don't fire laser if we already have one..?
+        if (this.laser) return;
         console.log('firing muh laz0r');
-        // TODO: add cooldown, and check
-        // TODO: make this obj not the toppest z-level?
 
-        // shallow copy, and clone non primitives
-        var newLaser = Object.assign({}, RESOURCES['ray_projectile']);
-        // TODO: make starting proper x,y pos (eye pos?)
-        newLaser["pos"] = [[this.xpos + this.swidth/2, this.ypos + this.sheight/2], [x, y]];
+        // TODO: fire at eye location, rather than center of character?
+        this.laser = new Laser(this, [this.xpos + this.swidth/2, this.ypos + this.sheight/2], [x, y]);
+    }
 
-        // add to the gameState
-        let index = this.gameState.elements.push(newLaser) - 1;
-        newLaser['index'] = index;
-        this.gameState.animatedReference.push(index);
+    removeLaser() {
+        this.laser = null;
     }
 
     lookTowards(x, y) {
@@ -104,11 +146,12 @@ class Player {
     }
 
     finishedDashing() {
-        return this.xvel < CHAR_SPEED && this.yvel < CHAR_SPEED && this.isDashing;
+        return this.xvel < CHAR_SPEED/2 && this.yvel < CHAR_SPEED/2 && this.isDashing;
     }
 
     // handle all movements, and collisions
     update(dt) {
+        if (this.laser) this.laser.update(dt);
         // nothing to do for a stationary player
         if (isZero(this.xvel) && isZero(this.yvel)) return;
 

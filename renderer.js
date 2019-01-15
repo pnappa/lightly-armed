@@ -64,7 +64,7 @@ class Renderer {
             if (objs[i] === null) continue;
             
             if (typeof objs[i].draw == 'function') { 
-                objs[i].draw(this.ctx);
+                objs[i].draw(this.ctx, this);
             } else {
                 this._draw(objs[i]);
             }
