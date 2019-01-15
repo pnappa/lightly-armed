@@ -11,8 +11,6 @@
  *	        - this was previously used to allow rotation.. but there is a better way. refer to player.js
  *
  * Bugs:
- *  - Dashing to the top left while moving to the left looks janky, while dashing to the bottom right when moving to the right looks too fast, I think I missed a sign somewhere..?
- *
  *
  * Next:
  *  - Make collision detection interpolate, and not prevent movement

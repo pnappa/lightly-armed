@@ -141,7 +141,7 @@ class Player {
     }
 
     finishedDashing() {
-        return this.xvel < CHAR_SPEED/2 && this.yvel < CHAR_SPEED/2 && this.isDashing;
+        return Math.abs(this.xvel) < CHAR_SPEED/2 && Math.abs(this.yvel) < CHAR_SPEED/2 && this.isDashing;
     }
 
     // handle all movements, and collisions
