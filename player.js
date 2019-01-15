@@ -177,7 +177,7 @@ class Player {
             this.xpos = futurePosX;
             this.ypos = futurePosY;
         } else {
-            // find closest object for each X and Y
+            // find closest object for each X and Y, proportional that vector
             // XXX: this assumes rectangles
             const INFDIST = 1e9;
             let firstXCollision = {dist: INFDIST, obj: null};
@@ -188,38 +188,58 @@ class Player {
                 let xDist = null;
                 let yDist = null;
 
-                // XXX: why do we care?
-                // I think my reasoning was that we need to find if it's a xcollision or not.
-                // if we only move x-wise, will this collide?
-                let xPlaneCollision = rectsIntersect([playerBounds[0], this.ypos, playerBounds[2], playerBounds[3]], objBounds);
-                // if we only move y-wise, will this collide?
-                let yPlaneCollision = rectsIntersect([this.xpos, playerBounds[1], playerBounds[2], playerBounds[3]], objBounds);
+                // if coming from the left
+                if (this.xvel > 0) {
+                    // leftmost point of rect minus rightmost point of plyaer
+                    xDist = objBounds[0] - (this.xpos + this.swidth);
+                } else {
+                    // coming from the right
+                    // left point of player minus rightmost point
+                    xDist = this.xpos - (objBounds[0] + objBounds[2]);
+                }
 
-                if (xPlaneCollision) {
-                    // if coming from the left
-                    if (this.xvel > 0) {
-                        // leftmost point of rect minus rightmost point of plyaer
-                        xDist = objBounds[0] - (this.xpos + this.swidth);
-                    } else {
-                        // coming from the right
-                        // left point of player minus rightmost point
-                        xDist = this.xpos - (objBounds[0] + objBounds[2]);
+                // if negative, it means we're colliding now, which is impossible
+                // so it's not an x collision
+                if (xDist < 0) xDist = null;
+                if (xDist) {
+                    // what percentage of the xvel vector we are away
+                    // 1 == further, 0 == already touching
+                    let proportionalDistance = xDist/(this.xvel*dt);
+                    if (proportionalDistance < firstXCollision.dist) {
+                        firstXCollision.dist = proportionalDistance;
+                        firstXCollision.obj = el;
                     }
                 }
 
-                if (yPlaneCollision) {
-                    // coming from the top 
-                    if (this.yvel > 0) {
-                        yDist = objBounds[1] - (this.ypos + this.sheight);
-                    } else {
-                        // from the bottom
-                        yDist = this.ypos - (objBounds[1] + objBounds[3]);
-                    }
+                // coming from the top 
+                if (this.yvel > 0) {
+                    yDist = objBounds[1] - (this.ypos + this.sheight);
+                } else {
+                    // from the bottom
+                    yDist = this.ypos - (objBounds[1] + objBounds[3]);
                 }
 
-                console.log(xDist, yDist);
+                if (yDist < 0) yDist = null;
+                if (yDist) {
+                    // what percentage of the yvel vector we are away
+                    // 1 == further, 0 == already touching
+                    let proportionalDistance = yDist/(this.yvel*dt);
+                    if (proportionalDistance < firstYCollision.dist) {
+                        firstYCollision.dist = proportionalDistance;
+                        firstYCollision.obj = el;
+                    }
+                }
             });
+
             // then, move X and Y, and reset xvel and yvel if those axes would have hit
+            if (firstYCollision.obj) {
+                this.ypos += Math.sign(this.yvel) * firstYCollision.dist * dt;
+                this.yvel = 0;
+            }
+            if (firstXCollision.obj) {
+                this.xpos += Math.sign(this.xvel) * firstXCollision.dist * dt;
+                this.xvel = 0;
+            }
         }
 
         // apply friction, add -ve vector * friction scalar
