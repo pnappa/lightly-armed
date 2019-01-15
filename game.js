@@ -11,6 +11,7 @@
  *	        - this was previously used to allow rotation.. but there is a better way. refer to player.js
  *
  * Bugs:
+ *  - Dashing over extends past click point. Somehow calculate the required vel to not overextend
  *
  * Next:
  *  - Make collision detection interpolate, and not prevent movement
@@ -52,8 +53,9 @@ function update() {
 
 function init() {
 	ctx.imageSmoothingEnabled = true;
-    gameState.setScreen("main_menu");
-	// gameState.setScreen("gameplay");
+    //gameState.setScreen("main_menu");
+    // XXX: temporary, speed up testing game mode
+	gameState.setScreen("gameplay");
 	var oldTime = Date.now();
 }
 

@@ -152,22 +152,6 @@ var Scenes = {
             "onclick": (obj, gs) => { console.log("how to play pressed"); }	
         },
 
-        // random clickable
-        {
-            "zlevel": 69,
-            "type": "shape",
-            "shape": "rect",
-            "pos": [300, 20],
-            "width": 50,
-            "height": 50,
-            "colour": "red",
-            "bounds": [300, 20, 50, 50],
-            "onclick": (obj, gs) => { 
-                gs.deleteObj(obj);
-                //if (obj["colour"] === "red") { obj["colour"] = "blue"; } else { obj["colour"] = "red"; }
-
-            }
-        },
         // LEFT COLUMN bars
         {
             "type": "shape",
@@ -314,41 +298,6 @@ var Scenes = {
             "pos": [119, -50],
             "width": 19,
             "height": 80
-        },
-
-        {
-            "type": "text",
-            "zlevel": 100,
-            "font-family": "Arial",
-            "font-size": 40,
-            "value": "fuck",
-            "pos": [400, 300], 					
-            "colour": "#bad455",
-            "anim": (obj, dt, gs) => {
-                obj.pos[0] = (obj.pos[0] + dt * 80) % gs.canvas.width; 
-                if (obj.pos[0] < -100) obj.pos[0] = 400;
-                obj["font-size"] = ((obj["font-size"] + 1) % 60);
-            }
-        },
-
-        // test self removal after delay
-        {
-            "zlevel": 100,
-            "type": "shape",
-            "shape": "rect",
-            "pos": [240, 20],
-            "width": 50,
-            "height": 50,
-            "colour": "blue",
-            "rotation": 0,
-            "lifetime": 10,
-            "anim": (obj, dt, gs) => { 
-                obj["lifetime"] -= dt;
-                if (obj["lifetime"] < 0) {
-                    gs.deleteObj(obj);
-                }
-                obj["rotation"] += dt;
-            }
         }
     ],
 	"game_menu": [
