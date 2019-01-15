@@ -150,8 +150,11 @@ class Player {
         // nothing to do for a stationary player
         if (isZero(this.xvel) && isZero(this.yvel)) return;
 
-        // XXX: very basic collision detection/resolution, probably should replace
-        let futureCol = false;
+
+        // find all objects the player will hit if travelling that distance
+
+        // all gameState collidable objects that we hit if we move to futurePos
+        let futureCollisions = [];
         let futurePosX = this.xpos + this.xvel * dt;
         let futurePosY = this.ypos + this.yvel * dt;
 
@@ -161,24 +164,62 @@ class Player {
         //      - circle/rect (so the character doesn't get stuck on corners)
         //      - non-AABB?
         // check collisions
-        // XXX: replace this dumb method (where no interpolation is done)
         this.gameState.collidableReference.forEach((el, index) => {
             el = this.gameState.elements[el];
-            if (rectsIntersect(playerBounds, getBounds(el))) {
-                futureCol = true;
+            let elBounds = getBounds(el);
+            if (rectsIntersect(playerBounds, elBounds)) {
+                futureCollisions.push(el);
             }
         });
 
-        if (!futureCol) {
+        if (futureCollisions.length == 0) {
             // move the players location += this vector
             this.xpos = futurePosX;
             this.ypos = futurePosY;
         } else {
-            // XXX: currently set both velocities to 0, might just change the only impacting one?
-            // like, if I am travelling up and to the right, but I hit an object to my right
-            // i should still have my vertical vel?
-            this.xvel = 0;
-            this.yvel = 0;
+            // find closest object for each X and Y
+            // XXX: this assumes rectangles
+            const INFDIST = 1e9;
+            let firstXCollision = {dist: INFDIST, obj: null};
+            let firstYCollision = {dist: INFDIST, obj: null};
+
+            futureCollisions.forEach((el) => {
+                let objBounds = getBounds(el);
+                let xDist = null;
+                let yDist = null;
+
+                // XXX: why do we care?
+                // I think my reasoning was that we need to find if it's a xcollision or not.
+                // if we only move x-wise, will this collide?
+                let xPlaneCollision = rectsIntersect([playerBounds[0], this.ypos, playerBounds[2], playerBounds[3]], objBounds);
+                // if we only move y-wise, will this collide?
+                let yPlaneCollision = rectsIntersect([this.xpos, playerBounds[1], playerBounds[2], playerBounds[3]], objBounds);
+
+                if (xPlaneCollision) {
+                    // if coming from the left
+                    if (this.xvel > 0) {
+                        // leftmost point of rect minus rightmost point of plyaer
+                        xDist = objBounds[0] - (this.xpos + this.swidth);
+                    } else {
+                        // coming from the right
+                        // left point of player minus rightmost point
+                        xDist = this.xpos - (objBounds[0] + objBounds[2]);
+                    }
+                }
+
+                if (yPlaneCollision) {
+                    // coming from the top 
+                    if (this.yvel > 0) {
+                        yDist = objBounds[1] - (this.ypos + this.sheight);
+                    } else {
+                        // from the bottom
+                        yDist = this.ypos - (objBounds[1] + objBounds[3]);
+                    }
+                }
+
+                console.log(xDist, yDist);
+            });
+            // then, move X and Y, and reset xvel and yvel if those axes would have hit
         }
 
         // apply friction, add -ve vector * friction scalar
