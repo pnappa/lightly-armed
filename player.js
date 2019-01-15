@@ -56,7 +56,6 @@ class Player {
         // add to the gameState
         let index = this.gameState.elements.push(newLaser) - 1;
         newLaser['index'] = index;
-        console.log(newLaser);
         this.gameState.animatedReference.push(index);
     }
 
@@ -75,16 +74,20 @@ class Player {
 
         this.xvel += xvel;
         this.yvel += yvel;
-        // clamp movement to not be more than CHAR_SPEED
-        if (Math.abs(this.xvel) > CHAR_SPEED) this.xvel = Math.sign(xvel) * CHAR_SPEED;
-        if (Math.abs(this.yvel) > CHAR_SPEED) this.yvel = Math.sign(yvel) * CHAR_SPEED;
+
+        // when the |speedVec| > CHAR_SPEED, clamp
+        // this fixes that diagonal movement is faster than cardinal
+        let velLength = Math.sqrt(this.xvel*this.xvel + this.yvel*this.yvel);
+        if (velLength > CHAR_SPEED) {
+            this.xvel *= CHAR_SPEED/velLength;
+            this.yvel *= CHAR_SPEED/velLength;
+        }
     }
 
     // add dash velocity to this position
     dashTo(x, y) {
         if (this.isDashing) return;
 
-        console.log("dashing to: ", x, " ", y);
         this.isDashing = true;
 
         let xDashVec = (x - (this.xpos + this.swidth/2));
