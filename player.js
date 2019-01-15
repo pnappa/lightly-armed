@@ -7,6 +7,8 @@ class Player {
         // RADIANS
         this.rotation = 0;
 
+        this.isDashing = false;
+
         this.gameState = gs;
 
         // player sprite and properties
@@ -66,17 +68,24 @@ class Player {
         this.rotation = Math.atan2(yOffset, xOffset);
     }
 
-    setXVel(x) {
-        this.xvel = x;
-    }
-    
-    setYVel(y) {
-        this.yvel = y;
+    // invoked when moving with WASD
+    playerAddVel(xvel, yvel) {
+        // don't move if dashing
+        if (this.isDashing) return;
+
+        this.xvel += xvel;
+        this.yvel += yvel;
+        // clamp movement to not be more than CHAR_SPEED
+        if (Math.abs(this.xvel) > CHAR_SPEED) this.xvel = Math.sign(xvel) * CHAR_SPEED;
+        if (Math.abs(this.yvel) > CHAR_SPEED) this.yvel = Math.sign(yvel) * CHAR_SPEED;
     }
 
     // add dash velocity to this position
     dashTo(x, y) {
+        if (this.isDashing) return;
+
         console.log("dashing to: ", x, " ", y);
+        this.isDashing = true;
 
         let xDashVec = (x - (this.xpos + this.swidth/2));
         let yDashVec = (y - (this.ypos + this.sheight/2));
@@ -89,6 +98,10 @@ class Player {
         // then multiply by DASH_POWER to set dash vel
         this.xvel = xDashVec * DASH_POWER;
         this.yvel = yDashVec * DASH_POWER;
+    }
+
+    finishedDashing() {
+        return this.xvel < CHAR_SPEED && this.yvel < CHAR_SPEED && this.isDashing;
     }
 
     // handle all movements, and collisions
@@ -131,8 +144,6 @@ class Player {
         this.xvel += -FRICTION * this.xvel * dt;
         this.yvel += -FRICTION * this.yvel * dt;
 
-        // clamp to avoid perpetually moving object
-        if (Math.abs(this.xvel) < 0.05) this.xvel = 0;
-        if (Math.abs(this.yvel) < 0.05) this.yvel = 0;
+        if (this.finishedDashing()) this.isDashing = false;
     }
 }

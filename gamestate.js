@@ -119,13 +119,13 @@ class GameState {
             // TODO: make this such that the most recent key overrides the opposite
             // s.t. if w is pressed, then s is pressed, we should move down, not stay still
             // w
-            if (this.keys[87]) this.player.setYVel(-CHAR_SPEED); 
+            if (this.keys[87]) this.player.playerAddVel(0, -CHAR_SPEED); 
             // a 
-            if (this.keys[65]) this.player.setXVel(-CHAR_SPEED);
+            if (this.keys[65]) this.player.playerAddVel(-CHAR_SPEED, 0);
             // s
-            if (this.keys[83]) this.player.setYVel(CHAR_SPEED); 
+            if (this.keys[83]) this.player.playerAddVel(0, CHAR_SPEED); 
             // d
-            if (this.keys[68]) this.player.setXVel(CHAR_SPEED); 
+            if (this.keys[68]) this.player.playerAddVel(CHAR_SPEED, 0); 
 
             // update character to look at the last-known position of the mouse cursor
             if (this.mousePos != null) this.player.lookTowards(this.mousePos.x, this.mousePos.y);

@@ -4,9 +4,9 @@ title_text.src = "resources/title_text.svg";
 
 const CHAR_SPEED = 200;
 // amount of pixels to slow down per frame
-const FRICTION = 10;
+const FRICTION = 20;
 // multiplicative scalar to dash speed
-const DASH_POWER = 1000;
+const DASH_POWER = 2200;
 
 var RESOURCES = {
 	"title_text": title_text,

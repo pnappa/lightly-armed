@@ -10,8 +10,9 @@
  *	    - fix the _draw fn such that it doesn't abuse ctx.save and ctx.restore 
  *	        - this was previously used to allow rotation.. but there is a better way. refer to player.js
  * Next:
- *	- Capture right click and implement dashing
  *	- Implement cooldowns
+ *	    - dashing
+ *	    - firing laser
  *	- Implement powerups
  *	    - projectiles? like a rocket launcher
  *	    - speed up
