@@ -10,8 +10,38 @@ class Renderer {
 		this.gs = gameState;
 	}
 
-	_draw(obj) {
+    drawLine(lineObj) {
+        this.ctx.beginPath();
+        this.ctx.lineWidth = lineObj.width;
+        this.ctx.strokeStyle = lineObj.colour;
+        this.ctx.moveTo(lineObj.pos[0][0], lineObj.pos[0][1]);
+        this.ctx.lineTo(lineObj.pos[1][0], lineObj.pos[1][1]);
+        this.ctx.stroke();
+    }
 
+    drawRect(rectObj) {
+        this.ctx.fillStyle = rectObj.colour;
+        this.ctx.fillRect(rectObj.pos[0], rectObj.pos[1], rectObj.width, rectObj.height);
+    }
+
+    drawImg(imgObj) {
+        if ("width" in imgObj) {
+            this.ctx.drawImage(imgObj.src, imgObj.pos[0], imgObj.pos[1], imgObj.width, imgObj.height);			
+        } else {
+            this.ctx.drawImage(imgObj.src, imgObj.pos[0], imgObj.pos[1]);
+        }
+    }
+
+    drawText(textObj) {
+        this.ctx.fillStyle = textObj.colour;
+        this.ctx.font = "" + textObj["font-size"] + "px " + textObj["font-family"];
+        if ("font-weight" in textObj) { 
+            this.ctx.font = textObj["font-weight"] + " " + this.ctx.font;
+        }
+        this.ctx.fillText(textObj.value, textObj["pos"][0], textObj["pos"][1]);
+    }
+
+	drawObj(obj) {
 		this.ctx.save();
 
         // TODO: make this rotation around the object origin, not the 0,0 point
@@ -20,33 +50,15 @@ class Renderer {
 		}
 
 		if (obj.type === "text") {
-			this.ctx.fillStyle = obj.colour;
-			this.ctx.font = "" + obj["font-size"] + "px " + obj["font-family"];
-			if ("font-weight" in obj) { 
-				this.ctx.font = obj["font-weight"] + " " + this.ctx.font;
-			}
-			this.ctx.fillText(obj.value, obj["pos"][0], obj["pos"][1]);
-
+            this.drawText(obj);
 		} else if (obj.type === "shape") {
-
 			if (obj.shape === "rect") {
-				this.ctx.fillStyle = obj.colour;
-				this.ctx.fillRect(obj.pos[0], obj.pos[1], obj.width, obj.height);
+                this.drawRect(obj);
 			} else if (obj.shape === "line") {
-                this.ctx.beginPath();
-                this.ctx.lineWidth = obj.width;
-                this.ctx.strokeStyle = obj.colour;
-                this.ctx.moveTo(obj.pos[0][0], obj.pos[0][1]);
-                this.ctx.lineTo(obj.pos[1][0], obj.pos[1][1]);
-                this.ctx.stroke();
+                this.drawLine(obj);
             }
-
 		} else if (obj.type === "image") {
-			if ("width" in obj) {
-				this.ctx.drawImage(obj.src, obj.pos[0], obj.pos[1], obj.width, obj.height);			
-			} else {
-				this.ctx.drawImage(obj.src, obj.pos[0], obj.pos[1]);
-			}
+            this.drawImg(obj);
 		} 
 
 		this.ctx.restore();
@@ -66,7 +78,7 @@ class Renderer {
             if (typeof objs[i].draw == 'function') { 
                 objs[i].draw(this.ctx, this);
             } else {
-                this._draw(objs[i]);
+                this.drawObj(objs[i]);
             }
         }
 	}

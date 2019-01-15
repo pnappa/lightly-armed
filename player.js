@@ -4,9 +4,6 @@ class Laser {
         // shallow clone
         this.res = Object.assign({}, RESOURCES['ray_projectile']);
         // set position 
-        // TODO: add cooldown, and check
-        // TODO: make this obj not the toppest z-level?
-
         this.res["pos"] = [startPos, endPos];
 
         this.player = player;
@@ -17,10 +14,7 @@ class Laser {
 
 
     draw(ctx, renderer) {
-        // XXX: this feels a bit hacky to call a private fn.
-        // but i wanna reuse shape drawing. perhaps let's refactor that out of _draw, and
-        // into helper fns for renderer? makes sense imo.
-        renderer._draw(this.res);
+        renderer.drawObj(this.res);
     }
 
     update(dt) {
@@ -89,6 +83,7 @@ class Player {
     }
 
     fireLaser(x, y) {
+        // TODO: add cooldown, and check
         // XXX: don't fire laser if we already have one..?
         if (this.laser) return;
         console.log('firing muh laz0r');
