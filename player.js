@@ -209,12 +209,19 @@ class Player {
         } else {
             // TODO: add some iota test, that will stop people getting caught on tiles
             // either this, or convert from tiles into meshes...
+            // ^ the latter is hard, as we need to change collision to support convex & concave
+            // polygons
+            // the former gets difficult as getting caught sliding is the same case as resolving
+            // hitting corners. checking that moving exclusive directions resolves means that we
+            // will preference resolving corners in a specific direction all the time, despite
+            // proximity of the scaled vectors.
             function getFirstCollision(player) {
                 // find closest object, based on the percentage of the distance by the velocity vector
                 // XXX: this assumes rectangles
                 const INFDIST = 1e9;
                 let firstCollision = {propDist: INFDIST, obj: null, xProp: null, yProp: null};
 
+                console.log("check");
                 futureCollisions.forEach((el) => {
                     let objBounds = getBounds(el);
                     let xDist = null;
@@ -225,12 +232,25 @@ class Player {
                     let proportionalYDist = INFDIST;
 
                     xDist = player._xDistance(objBounds);
-                    if (xDist > 0) proportionalXDist = xDist/(Math.abs(player.xvel)*dt);
+                    if (xDist > 0 && Math.abs(player.xvel) > 0) proportionalXDist = xDist/(Math.abs(player.xvel)*dt);
                     yDist = player._yDistance(objBounds);
-                    if (yDist > 0) proportionalYDist = yDist/(Math.abs(player.yvel)*dt);
+                    if (yDist > 0 && Math.abs(player.yvel) > 0) proportionalYDist = yDist/(Math.abs(player.yvel)*dt);
 
-                    if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
-                        firstCollision = {propDist: Math.min(proportionalXDist, proportionalYDist), obj: el, xProp: proportionalXDist, yProp: proportionalYDist};
+                    if (proportionalYDist != INFDIST || proportionalXDist != INFDIST) {
+                        // if equal, it means we're on that sliding case, I think
+                        // ah, not necessarily - consider dashing from far away, 
+                        // as the distances will be different, but will still get caught.
+                        // XXX: test
+                        if (isEq(proportionalXDist, proportionalYDist)) {
+                            console.log(
+                            // XXX: currently ignore, lets see.
+                            // hmm, doesn't work. wonder which is returning a value
+                        } else {
+                            if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
+                                firstCollision = {propDist: Math.min(proportionalXDist, proportionalYDist), obj: el, xProp: proportionalXDist, yProp: proportionalYDist};
+                                console.log('found collision', el, firstCollision.propDist);
+                            }
+                        }
                     }
                 });
 

@@ -164,6 +164,7 @@ class GameState {
 
 		var x = event.pageX - this.leftOffset;
 		var y = event.pageY - this.topOffset;
+        console.log("clicked:", x, y);
 
         // TODO: cleanup, use a design pattern here imo
         const lmb = 0;

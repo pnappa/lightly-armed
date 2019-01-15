@@ -26,8 +26,12 @@ function getBounds(obj) {
     return bounds;
 }
 
-function isZero(x) {
-    return Math.abs(x) <= epsilon;
+function isZero(x, eps=epsilon) {
+    return Math.abs(x) <= eps;
+}
+
+function isEq(a, b, tolerance=0.1) {
+    return Math.abs(a-b) <= tolerance;
 }
 
 function colToRgbaStr(col) {
