@@ -37,10 +37,11 @@ var RESOURCES = {
     }
 }
 
+const MapFiles = {"map1": "resources/map1.txt"};
 // these are expanded in init
-var Maps = [{
+var Maps = {
 	
-}];
+};
 
 var Scenes = {
 	"main_menu": [
@@ -314,9 +315,8 @@ var Scenes = {
             "pos": [0, 0],
             // canvas size
             "width": 600,
-            "height": 40,
+            "height": 30,
             "colour": "black",
-            "bounds": [0, 0, 600, 40],
             // player shouldn't be able to move into the menubar
             "oncollide": () => {}
         },

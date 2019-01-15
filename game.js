@@ -51,8 +51,59 @@ function update() {
 	oldTime = now;
 }
 
+// populate the Maps with walls, etc based on the map files
+function loadMaps() {
+    // just a basic bitch wall object
+    const wallWidth = 30;
+    const wallHeight = 30;
+    const Wall = {
+        "type": "shape",
+        "shape": "rect",
+        "zlevel": 70,
+        "pos": [null, null],
+        "width": wallWidth,
+        "height": wallHeight,
+        "colour": "green"
+    };
+
+    function generateMap(fileName) {
+        function parseMap(mapText) {
+            let builtMap = [];
+            console.log(mapText);
+            let rows = mapText.split('\n');
+            rows.forEach((row, rowNum) => {
+                row.split(',').forEach((col, colNum) => {
+                    // shallow copy wall
+                    let cWall = Object.assign({}, Wall);
+                    cWall.pos = [col*wallWidth, row*wallHeight];
+                    builtMap.push(cWall);
+                });
+            });
+            return builtMap;
+        }
+
+        var file = new XMLHttpRequest();
+        file.open("GET", fileName, true);
+        file.onreadystatechange = () => {
+            if (file.readyState === 4) {
+                if (file.status === 200 || file.status === 0) {
+                    parseMap(file.responseText);
+                }
+            }
+        }
+        file.send();
+    };
+
+    for (let mapName in MapFiles) {
+        Maps[mapName] = generateMap(MapFiles[mapName]);
+    }
+
+    console.log('loaded maps:', Maps);
+}
+
 function init() {
 	ctx.imageSmoothingEnabled = true;
+    loadMaps();
     //gameState.setScreen("main_menu");
     // XXX: temporary, speed up testing game mode
 	gameState.setScreen("gameplay");
