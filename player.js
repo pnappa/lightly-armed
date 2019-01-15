@@ -188,56 +188,58 @@ class Player {
                 let xDist = null;
                 let yDist = null;
 
-                // if coming from the left
-                if (this.xvel > 0) {
-                    // leftmost point of rect minus rightmost point of plyaer
-                    xDist = objBounds[0] - (this.xpos + this.swidth);
-                } else {
-                    // coming from the right
-                    // left point of player minus rightmost point
-                    xDist = this.xpos - (objBounds[0] + objBounds[2]);
-                }
+                // if we only move x-wise, will this collide?
+                let xPlaneCollision = rectsIntersect([playerBounds[0], this.ypos, playerBounds[2], playerBounds[3]], objBounds);
+                // if we only move y-wise, will this collide?
+                let yPlaneCollision = rectsIntersect([this.xpos, playerBounds[1], playerBounds[2], playerBounds[3]], objBounds);
 
-                // if negative, it means we're colliding now, which is impossible
-                // so it's not an x collision
-                if (xDist < 0) xDist = null;
-                if (xDist) {
-                    // what percentage of the xvel vector we are away
-                    // 1 == further, 0 == already touching
-                    let proportionalDistance = xDist/(this.xvel*dt);
-                    if (proportionalDistance < firstXCollision.dist) {
-                        firstXCollision.dist = proportionalDistance;
-                        firstXCollision.obj = el;
+                // if neither, or both, it means this one relies on x & y movement for collison.
+
+                if (xPlaneCollision || !yPlaneCollision) {
+
+                    // if coming from the left
+                    if (this.xvel > 0) {
+                        // leftmost point of rect minus rightmost point of plyaer
+                        xDist = objBounds[0] - (this.xpos + this.swidth);
+                    } else {
+                        // coming from the right
+                        // left point of player minus rightmost point
+                        xDist = this.xpos - (objBounds[0] + objBounds[2]);
                     }
+                        // what percentage of the xvel vector we are away
+                        // 1 == further, 0 == already touching
+                        let proportionalDistance = xDist/(this.xvel*dt);
+                        if (proportionalDistance < firstXCollision.dist) {
+                            firstXCollision.dist = proportionalDistance;
+                            firstXCollision.obj = el;
+                        }
                 }
 
-                // coming from the top 
-                if (this.yvel > 0) {
-                    yDist = objBounds[1] - (this.ypos + this.sheight);
-                } else {
-                    // from the bottom
-                    yDist = this.ypos - (objBounds[1] + objBounds[3]);
-                }
-
-                if (yDist < 0) yDist = null;
-                if (yDist) {
-                    // what percentage of the yvel vector we are away
-                    // 1 == further, 0 == already touching
-                    let proportionalDistance = yDist/(this.yvel*dt);
-                    if (proportionalDistance < firstYCollision.dist) {
-                        firstYCollision.dist = proportionalDistance;
-                        firstYCollision.obj = el;
+                if (yPlaneCollision || !xPlaneCollision) {
+                    // coming from the top 
+                    if (this.yvel > 0) {
+                        yDist = objBounds[1] - (this.ypos + this.sheight);
+                    } else {
+                        // from the bottom
+                        yDist = this.ypos - (objBounds[1] + objBounds[3]);
                     }
+                        // what percentage of the yvel vector we are away
+                        // 1 == further, 0 == already touching
+                        let proportionalDistance = yDist/(this.yvel*dt);
+                        if (proportionalDistance < firstYCollision.dist) {
+                            firstYCollision.dist = proportionalDistance;
+                            firstYCollision.obj = el;
+                        }
                 }
             });
 
             // then, move X and Y, and reset xvel and yvel if those axes would have hit
             if (firstYCollision.obj) {
-                this.ypos += Math.sign(this.yvel) * firstYCollision.dist * dt;
+                this.ypos += this.yvel * firstYCollision.dist * dt;
                 this.yvel = 0;
             }
             if (firstXCollision.obj) {
-                this.xpos += Math.sign(this.xvel) * firstXCollision.dist * dt;
+                this.xpos += this.xvel * firstXCollision.dist * dt;
                 this.xvel = 0;
             }
         }
