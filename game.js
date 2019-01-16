@@ -12,6 +12,9 @@
  *
  * Bugs:
  *  - Dashing over extends past click point. Somehow calculate the required vel to not overextend
+ *  - There is a specific corner collision bug that occurs with dashing.
+ *      - When forced inside a L shaped concave corner, and dashing at a specific angle, you can phase into blocks.
+ *      - ah, I think its because there's 3 collisions involved there, all equidistant. Maybe I do need to run the collision code until a fixed point?
  *
  * Next:
  *  - Make laser continue until a blocking object, not just until the mouse

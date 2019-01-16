@@ -5,8 +5,9 @@ rendererjssum=$(echo "sha384-"$(openssl dgst -sha384 -binary renderer.js | opens
 resourcesjssum=$(echo "sha384-"$(openssl dgst -sha384 -binary resources.js | openssl base64 -A))
 utilsjssum=$(echo "sha384-"$(openssl dgst -sha384 -binary utils.js | openssl base64 -A))
 stylecsssum=$(echo "sha384-"$(openssl dgst -sha384 -binary style.css | openssl base64 -A))
+powerupsjssum=$(echo "sha384-"$(openssl dgst -sha384 -binary powerups.js | openssl base64 -A))
 
-srijson="{\"gamejssum\": \"$gamejssum\", \"playerjssum\": \"$playerjssum\", \"gamestatejssum\": \"$gamestatejssum\", \"rendererjssum\": \"$rendererjssum\", \"resourcesjssum\": \"$resourcesjssum\", \"utilsjssum\": \"$utilsjssum\", \"stylecsssum\": \"$stylecsssum\"}"
+srijson="{\"gamejssum\": \"$gamejssum\", \"playerjssum\": \"$playerjssum\", \"gamestatejssum\": \"$gamestatejssum\", \"rendererjssum\": \"$rendererjssum\", \"resourcesjssum\": \"$resourcesjssum\", \"utilsjssum\": \"$utilsjssum\", \"stylecsssum\": \"$stylecsssum\", \"powerupsjssum\": \"$powerupsjssum\"}"
 
 echo $srijson > /tmp/srihashes
 

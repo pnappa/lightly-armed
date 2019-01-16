@@ -37,6 +37,8 @@ class GameState {
 		document.addEventListener('keydown', (event) => { 
             // set a date for the keys, so we can check most recent
             this.keys[event.keyCode] = new Date(); 
+            // e
+            if (event.keyCode == 69 && this.screenState === 'gameplay' && this.player) this.player.usePowerup();
         }, false);
 		document.addEventListener('keyup', (event) => {this.keys[event.keyCode] = false; }, false);
         // bug where if lost focus, character kept moving
@@ -148,8 +150,6 @@ class GameState {
 
             this.player.update(dt);
         }
-
-        
 	}
 
 	getDraws() {

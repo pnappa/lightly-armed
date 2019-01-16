@@ -13,8 +13,8 @@ const DASH_INTERVAL = 1;
 
 var RESOURCES = {
 	"title_text": title_text,
+    // colour defined in the Laser class
     "ray_projectile": {
-        "colour": "rgba(255, 0, 0, 1)",
         "type": "shape",
         "shape": "line",
         // defines end points of line

@@ -1,38 +1,4 @@
 
-class Laser {
-    constructor(player, startPos, endPos) {
-        // shallow clone
-        this.res = Object.assign({}, RESOURCES['ray_projectile']);
-        // set position 
-        this.res["pos"] = [startPos, endPos];
-
-        this.player = player;
-
-        // rgba
-        this.colour = [255, 0, 0, 1];
-    }
-
-
-    draw(ctx, renderer) {
-        renderer.drawObj(this.res);
-    }
-
-    update(dt) {
-        // update its lifetime
-        this.res.lifetime -= dt;
-        if (this.res.lifetime <= 0) {
-            this.player.removeLaser();
-            return;
-        }
-
-        // set some opacity m8
-        this.colour[3] = this.res.lifetime/this.res.startinglifetime;
-
-        // set the colour to a canvas friendly str
-        this.res.colour = colToRgbaStr(this.colour);
-    }
-}
-
 class Player {
     constructor(x, y, gs) {
         // location of player in canvas
@@ -44,6 +10,9 @@ class Player {
         this.isDashing = false;
 
         this.laser = null;
+        //this.powerup = null;
+        // XXX: temporarily give the player a shield, for testing
+        this.powerup = new Shield(this);
 
         this.gameState = gs;
 
@@ -63,6 +32,7 @@ class Player {
     draw(ctx, renderer) {
         // draw laser below player
         if (this.laser) this.laser.draw(ctx, renderer);
+        if (this.powerup) this.powerup.draw(ctx, renderer);
 
         // draw bounding box
         renderer.drawRect({
@@ -94,6 +64,8 @@ class Player {
         // TODO: add cooldown, and check
         // XXX: don't fire laser if we already have one..?
         if (this.laser) return;
+        // firing a laser destroys your own shield too
+        if (this.powerup instanceof Shield) this.powerup = null;
 
         // TODO: fire at eye location, rather than center of character?
         this.laser = new Laser(this, [this.xpos + this.swidth/2, this.ypos + this.sheight/2], [x, y]);
@@ -101,6 +73,17 @@ class Player {
 
     removeLaser() {
         this.laser = null;
+    }
+
+    usePowerup() {
+        if (this.powerup) {
+            console.log('powerup used');
+            this.powerup.use();
+        }
+    }
+
+    removePowerUp() {
+        this.powerup = null;
     }
 
     lookTowards(x, y) {
@@ -181,6 +164,7 @@ class Player {
     // handle all movements, and collisions
     update(dt) {
         if (this.laser) this.laser.update(dt);
+        if (this.powerup) this.powerup.update(dt);
         if (this.finishedDashing()) this.isDashing = false;
         // nothing to do for a stationary player
         if (isZero(this.xvel) && isZero(this.yvel)) return;
@@ -237,7 +221,10 @@ class Player {
 
                 return firstCollision;
             }
-
+            // TODO: make this continuous, until we have no collisions.
+            // There is a scenario where 3 objects are close, but only two are counted.
+            // I'm sure there'll be situations where there's more than only 3, so 
+            // let's do it right.
             let firstCollision = getFirstCollision(this);
 
             // hit from the side
@@ -275,4 +262,46 @@ class Player {
         this.xvel += -FRICTION * this.xvel * dt;
         this.yvel += -FRICTION * this.yvel * dt;
     }
+
+    // for displaying with a future UI class
+    getPlayerInfo() {
+        // This is necessary, as we may need to draw things at certain levels.
+        // So we delegate to some UI objects which are at preset zlevels.
+
+    }
 }
+
+class Laser {
+    constructor(player, startPos, endPos) {
+        // shallow clone
+        this.res = Object.assign({}, RESOURCES['ray_projectile']);
+        // set position 
+        this.res["pos"] = [startPos, endPos];
+
+        this.player = player;
+
+        // rgba
+        this.colour = [255, 0, 0, 1];
+    }
+
+
+    draw(ctx, renderer) {
+        renderer.drawObj(this.res);
+    }
+
+    update(dt) {
+        // update its lifetime
+        this.res.lifetime -= dt;
+        if (this.res.lifetime <= 0) {
+            this.player.removeLaser();
+            return;
+        }
+
+        // set some opacity m8
+        this.colour[3] = this.res.lifetime/this.res.startinglifetime;
+
+        // set the colour to a canvas friendly str
+        this.res.colour = colToRgbaStr(this.colour);
+    }
+}
+
