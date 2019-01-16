@@ -6,7 +6,7 @@ A relatively up to date demo is available here: [https://pat.sh/projects/lightly
  
 Plus, here's a demo gif for those lazy to click a link.
 
-![Demo gif](https://raw.github.com/pnappa/lightly-armed/master/mockups/demo.gif" width="562")
+![Demo gif](https://raw.github.com/pnappa/lightly-armed/master/mockups/demo.gif)
 
 ## Future
 A lot is currently planned for this game:
