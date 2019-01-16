@@ -154,24 +154,28 @@ class Player {
     // return the number of pixels separating this character and the supplied bounding box
     _xDistance(objBounds) {
         // if coming from the left
-        if (this.xvel > 0) {
+        if (this.xvel > 0 && !objBounds[westColIndex]) {
             // leftmost point of rect minus rightmost point of plyaer
             return objBounds[0] - (this.xpos + this.swidth);
-        } else {
+        } else if (this.xvel < 0 && !objBounds[eastColIndex]) {
             // coming from the right
             // left point of player minus rightmost point
             return this.xpos - (objBounds[0] + objBounds[2]);
         }
+
+        return -1;
     }
 
     _yDistance(objBounds) {
         // coming from the top 
-        if (this.yvel > 0) {
+        if (this.yvel > 0 && !objBounds[northColIndex]) {
             return objBounds[1] - (this.ypos + this.sheight);
-        } else {
+        } else if (this.yvel < 0 && !objBounds[southColIndex]) {
             // from the bottom
             return this.ypos - (objBounds[1] + objBounds[3]);
         }
+
+        return -1;
     }
 
     // handle all movements, and collisions
@@ -218,7 +222,6 @@ class Player {
             function getFirstCollision(player) {
                 // find closest object, based on the percentage of the distance by the velocity vector
                 // XXX: this assumes rectangles
-                const INFDIST = 1e9;
                 let firstCollision = {propDist: INFDIST, obj: null, xProp: null, yProp: null};
 
                 futureCollisions.forEach((el) => {

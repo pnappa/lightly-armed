@@ -73,6 +73,9 @@ function loadMaps() {
             "shape": "rect",
             "zlevel": 70,
             "pos": [null, null],
+            // the extra four arguments denote whether we should ignore this,
+            // coming from NESW respectively. these are used in player._X/YDistance fns.
+            "bounds": [null, null, wallWidth, wallHeight, false, false, false, false],
             "width": wallWidth,
             "height": wallHeight,
             "colour": "green",
@@ -84,14 +87,44 @@ function loadMaps() {
         function parseMap(mapText) {
             let builtMap = [];
             let rows = mapText.trim().split('\n');
-            console.log(rows);
+            // 2d array of map (columns split on commas)
+            let matrix = [];
             rows.forEach((row, rowNum) => {
-                row.split(',').forEach((col, colNum) => {
+                matrix.push(row.split(','));
+            });
+
+            console.log(matrix);
+            matrix.forEach((row, rowNum) => {
+                row.forEach((col, colNum) => {
                     // is there an object for this kind of tile?
                     if (col in Tiles) {
                         // shallow copy wall
                         let cWall = Object.assign({}, Tiles[col]);
                         cWall.pos = [colNum*wallWidth, startY + rowNum*wallHeight];
+                        // duplicate bounds array
+                        cWall.bounds = cWall.bounds.slice();
+                        cWall.bounds[0] = cWall.pos[0];
+                        cWall.bounds[1] = cWall.pos[1];
+
+                        // assign truthy values to last 4 elements, depending on
+                        // whether there are adjacent blocks.
+                        // is there a collidable block north?
+                        if (rowNum > 0 && isCollidable(Tiles[matrix[rowNum-1][colNum]])) {
+                            cWall.bounds[northColIndex] = true;
+                        }
+                        // is there a collidable block south?
+                        if (rowNum < matrix.length - 1 && isCollidable(Tiles[matrix[rowNum+1][colNum]])) {
+                            cWall.bounds[southColIndex] = true;
+                        }
+                        // is there a collable block west?
+                        if (colNum > 0 && isCollidable(Tiles[matrix[rowNum][colNum-1]])) {
+                            cWall.bounds[westColIndex] = true;
+                        }
+                        // collidable block east?
+                        if (colNum < row.length - 1 && isCollidable(Tiles[matrix[rowNum][colNum+1]])) {
+                            cWall.bounds[eastColIndex] = true;
+                        }
+                        
                         // XXX: temp assign random colour to walls
                         cWall.colour = colToRgbaStr([Math.random()*255, Math.random()*255, Math.random()*255, 1]);
                         builtMap.push(cWall);

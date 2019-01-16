@@ -1,5 +1,15 @@
 
 const epsilon = 0.01;
+// a very large number (TM) that is surely a distance we'll never deal with.
+// I don't want to use maxnum, as there'll potentially be overflow issues.
+const INFDIST = 1e9;
+
+// for populating the bounds array, indicating whether there's a bounding
+// box adjacent in that cardinal direction (so we can ignore them)
+const northColIndex = 4;
+const eastColIndex = 5;
+const southColIndex = 6;
+const westColIndex = 7;
 
 function pointInRect(pX, pY, rX, rY, rW, rH) {
     return (pX >= rX && pX <= rX + rW &&
@@ -36,4 +46,8 @@ function isEq(a, b, tolerance=0.1) {
 
 function colToRgbaStr(col) {
     return 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + col[3] + ')';
+}
+
+function isCollidable(obj) {
+    return obj && 'oncollide' in obj;
 }
