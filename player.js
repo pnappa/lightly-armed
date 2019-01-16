@@ -153,7 +153,7 @@ class Player {
 
     // return the number of pixels separating this character and the supplied bounding box
     _xDistance(objBounds) {
-        // if coming from the left
+        // if hittable coming from the left
         if (this.xvel > 0 && !objBounds[westColIndex]) {
             // leftmost point of rect minus rightmost point of plyaer
             return objBounds[0] - (this.xpos + this.swidth);
@@ -167,7 +167,7 @@ class Player {
     }
 
     _yDistance(objBounds) {
-        // coming from the top 
+        // if hittable coming from the top 
         if (this.yvel > 0 && !objBounds[northColIndex]) {
             return objBounds[1] - (this.ypos + this.sheight);
         } else if (this.yvel < 0 && !objBounds[southColIndex]) {
@@ -211,14 +211,6 @@ class Player {
             this.xpos = futurePosX;
             this.ypos = futurePosY;
         } else {
-            // TODO: add some iota test, that will stop people getting caught on tiles
-            // either this, or convert from tiles into meshes...
-            // ^ the latter is hard, as we need to change collision to support convex & concave
-            // polygons
-            // the former gets difficult as getting caught sliding is the same case as resolving
-            // hitting corners. checking that moving exclusive directions resolves means that we
-            // will preference resolving corners in a specific direction all the time, despite
-            // proximity of the scaled vectors.
             function getFirstCollision(player) {
                 // find closest object, based on the percentage of the distance by the velocity vector
                 // XXX: this assumes rectangles
@@ -250,12 +242,10 @@ class Player {
 
             // hit from the side
             if (firstCollision.propDist === firstCollision.xProp) {
-                //console.log('side1');
                 let estDist = firstCollision.xProp * this.xvel;
                 this.xpos += (estDist - (Math.sign(this.xvel)*epsilon)) * dt;
                 this.xvel = 0;
             } else if (firstCollision.propDist === firstCollision.yProp) {
-                //console.log('top1');
                 let estDist = firstCollision.yProp * this.yvel;
                 this.ypos += (estDist - (Math.sign(this.yvel)*epsilon)) * dt;
                 this.yvel = 0;
@@ -269,15 +259,12 @@ class Player {
             
             // hit from the side
             if (firstCollision.propDist === firstCollision.xProp) {
-                //console.log('side2');
                 let estDist = firstCollision.xProp * this.xvel;
                 this.xpos += (estDist - (Math.sign(this.xvel)*epsilon)) * dt;
             } else if (firstCollision.propDist === firstCollision.yProp) {
-                //console.log('top2');
                 let estDist = firstCollision.yProp * this.yvel;
                 this.ypos += (estDist - (Math.sign(this.yvel)*epsilon)) * dt;
             } else {
-                //console.log('else');
                 // no collision remaining
                 this.xpos += this.xvel*dt; 
                 this.ypos += this.yvel*dt; 
