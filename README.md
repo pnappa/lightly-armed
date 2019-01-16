@@ -16,6 +16,7 @@ A lot is currently planned for this game:
     - Including private rooms
  - Power-ups
  - Level dangers (think fire vents, etc.)
+ - Reflective surfaces which lasers can bounce off.
  - Additional weapons
  - Add a little help section that details all powerups and basic rules.
 

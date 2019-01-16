@@ -68,7 +68,23 @@ class Player {
         if (this.powerup instanceof Shield) this.powerup = null;
 
         // TODO: fire at eye location, rather than center of character?
-        this.laser = new Laser(this, [this.xpos + this.swidth/2, this.ypos + this.sheight/2], [x, y]);
+
+        // generate a line that extends beyond the screen
+        // end points are unknown, lets extrapolate using angle
+        let line = [this.xpos + this.swidth/2, this.ypos + this.sheight/2, null, null]
+        let xOffset = (x - (this.xpos + this.swidth/2));
+        let yOffset = -(y - (this.ypos + this.sheight/2));
+        let angle = -Math.atan2(yOffset, xOffset);
+        // the longest possible line is this long from start to finish, so lets extend 
+        // our line by this much.
+        let longestLineLength = Math.sqrt((600*600)+(420*420));
+        let newLineLength = Math.sqrt(xOffset*xOffset + yOffset*yOffset) + longestLineLength;
+        let newXOffset = Math.cos(angle)*newLineLength;
+        let newYOffset = Math.sin(angle)*newLineLength;
+        line[2] = newXOffset + x;
+        line[3] = newYOffset + y;
+
+        this.laser = new Laser(this, this.gameState, [line[0], line[1]], [line[2], line[3]]);
     }
 
     removeLaser() {
@@ -272,11 +288,13 @@ class Player {
 }
 
 class Laser {
-    constructor(player, startPos, endPos) {
+    constructor(player, gs, startPos, endPos) {
         // shallow clone
         this.res = Object.assign({}, RESOURCES['ray_projectile']);
         // set position 
         this.res["pos"] = [startPos, endPos];
+
+        this.gs = gs;
 
         this.player = player;
 
