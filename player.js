@@ -221,7 +221,6 @@ class Player {
                 const INFDIST = 1e9;
                 let firstCollision = {propDist: INFDIST, obj: null, xProp: null, yProp: null};
 
-                console.log("check");
                 futureCollisions.forEach((el) => {
                     let objBounds = getBounds(el);
                     let xDist = null;
@@ -236,21 +235,8 @@ class Player {
                     yDist = player._yDistance(objBounds);
                     if (yDist > 0 && Math.abs(player.yvel) > 0) proportionalYDist = yDist/(Math.abs(player.yvel)*dt);
 
-                    if (proportionalYDist != INFDIST || proportionalXDist != INFDIST) {
-                        // if equal, it means we're on that sliding case, I think
-                        // ah, not necessarily - consider dashing from far away, 
-                        // as the distances will be different, but will still get caught.
-                        // XXX: test
-                        if (isEq(proportionalXDist, proportionalYDist)) {
-                            console.log(
-                            // XXX: currently ignore, lets see.
-                            // hmm, doesn't work. wonder which is returning a value
-                        } else {
-                            if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
-                                firstCollision = {propDist: Math.min(proportionalXDist, proportionalYDist), obj: el, xProp: proportionalXDist, yProp: proportionalYDist};
-                                console.log('found collision', el, firstCollision.propDist);
-                            }
-                        }
+                    if (Math.min(proportionalXDist, proportionalYDist) < firstCollision.propDist) {
+                        firstCollision = {propDist: Math.min(proportionalXDist, proportionalYDist), obj: el, xProp: proportionalXDist, yProp: proportionalYDist};
                     }
                 });
 
