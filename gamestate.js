@@ -4,8 +4,16 @@ class GameState {
 		//TODO: update that the offsets get updated on resize... otherwise clicks don't work after
 		this.canvas = canvas;
 		this.ctx = context;
+
+        // allows us to find the relative position of the mouse
 		this.leftOffset = canvas.offsetLeft;
 		this.topOffset = canvas.offsetTop;
+        // need to register this s.t. we don't get innacurate on resize
+        window.onresize = (event) => {
+            this.leftOffset = canvas.offsetLeft;
+            this.topOffset = canvas.offsetTop;
+        };
+
 		this.screenState = null;
 		this.elements = [];
         // stores the index that clickable objects reside in
@@ -35,6 +43,7 @@ class GameState {
         document.addEventListener('blur', (event) => {this.keys.forEach((_, index) => { this.keys[index] = false; });});
 
         canvas.addEventListener('mousemove', (event) => {this.mouseMoveHandler(event); }, false);
+
 
 
 		// // animations mess up on tab changes, so it's better to leave it

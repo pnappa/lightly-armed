@@ -12,7 +12,7 @@ Plus, here's a demo gif for those lazy to click a link.
 A lot is currently planned for this game:
  - Firing your laser will make you go blind for a short duration
     - Currently not implemented, as that would make development rather difficult :)
- - >=2 player online (via WebRTC, minor hosted server for match-making)
+ - 2+ player online (via WebRTC, minor hosted server for match-making)
     - Including private rooms
  - Power-ups
  - Level dangers (think fire vents, etc.)
