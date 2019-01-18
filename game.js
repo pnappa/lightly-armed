@@ -15,6 +15,7 @@
  *  - There is a specific corner collision bug that occurs with dashing.
  *      - When forced inside a L shaped concave corner, and dashing at a specific angle, you can phase into blocks.
  *      - ah, I think its because there's 3 collisions involved there, all equidistant. Maybe I do need to run the collision code until a fixed point?
+ *  - Weird positioning after dashing towards some blocks. The way to reproduce is to go right to the bottom of a block, then head left, and point your mouse slightly up, and dash. It's impossible that you would end up sliding below the block, as there's 0 pixels Y-wise between you, yet thats what happens.
  *
  * Next:
  *  - Make laser continue until a blocking object, not just until the mouse

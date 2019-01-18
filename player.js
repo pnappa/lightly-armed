@@ -83,6 +83,42 @@ class Player {
         let newYOffset = Math.sin(angle)*newLineLength;
         line[2] = newXOffset + x;
         line[3] = newYOffset + y;
+        
+        // XXX: this seems rather inefficient. Why don't we just iterate over each 
+        // collidable, and find the point of intersection. We then find the closest
+        // intersection (i.e. draw a line from the line start until that intersection
+        // and the the shortest line is the first point of collision)
+        /*
+        // binary search until we find no collisions
+        // XXX: for now lets always just shrink..? it'll leave us with an
+        // under approximation, but we can probably use the last iteration's
+        // colliding elements to deduce closest point?
+        let collidingRects = [];
+        let cLine = line.slice();
+        // elements from the previous iteration that collided.
+        let prevColliding = null;
+        this.gameState.collidableReference.forEach((el, index) => {
+            el = this.gameState.elements[el];
+            collidingRects.push(el);
+        }
+        while (collidingRects.length) {
+            let nextColliding = [];
+            // TODO: gen line half the length?
+            cLine = [];
+            collidingRects.forEach((el, ind) => {
+                if (lineIntersectsRect(cLine, getBounds(el))) {
+                    nextColliding.push(el);
+                }
+            });
+
+            // rather than checking EVERY element every iteration, lets only check those
+            // we collided with in the previous iteration (as for a shorter segment, the
+            // elements collided with is a subset of those collided with the longer seg)
+            collidingRects = nextColliding;
+        }
+        this.laser = new Laser(this, this.gameState, [cLine[0], cLine[1]], [cLine[2], cLine[3]]);
+        */
+
 
         this.laser = new Laser(this, this.gameState, [line[0], line[1]], [line[2], line[3]]);
     }

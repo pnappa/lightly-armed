@@ -22,8 +22,8 @@ var RESOURCES = {
         // girth :o
         "width": 3,
         // how many seconds the object is alive for
-        "startinglifetime": 0.3,
-        "lifetime": 0.3,
+        "startinglifetime": 0.2,
+        "lifetime": 0.2,
     },
     "player": {
         "colour": "blue",
