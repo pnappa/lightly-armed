@@ -20,6 +20,10 @@ class GameState {
         this.clickableReference = [];
         // stores the index that animated objects reside in
         this.animatedReference = [];
+        // stores the index that objects with bounding boxes reside in
+        this.collidableReference = [];
+        // the line segments that lasers can collide with
+        this.rayCollisionSegments = [];
 
         this.player = new Player(50, 50, this);
 
@@ -75,14 +79,19 @@ class GameState {
         this.clickableReference = [];
         this.animatedReference = [];
         this.collidableReference = [];
+        this.rayCollisionSegments = [];
         
         // TODO: replace with a better way of injecting elements
         if (this.screenState === "gameplay") {
             this.elements.push(this.player);
             // load a map
             // XXX: for now, just use map1 always 
-            Maps["map1"].forEach((el) => {
+            Maps["map1"]["tiles"].forEach((el) => {
                 this.elements.push(el);
+            });
+
+            Maps["map1"]["segments"].forEach((el) => {
+                this.rayCollisionSegments.push(el);        
             });
         }
 

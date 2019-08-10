@@ -6,8 +6,9 @@ resourcesjssum=$(echo "sha384-"$(openssl dgst -sha384 -binary resources.js | ope
 utilsjssum=$(echo "sha384-"$(openssl dgst -sha384 -binary utils.js | openssl base64 -A))
 stylecsssum=$(echo "sha384-"$(openssl dgst -sha384 -binary style.css | openssl base64 -A))
 powerupsjssum=$(echo "sha384-"$(openssl dgst -sha384 -binary powerups.js | openssl base64 -A))
+linejssum=$(echo "sha384-"$(openssl dgst -sha384 -binary line-segments-intersect.js | openssl base64 -A))
 
-srijson="{\"gamejssum\": \"$gamejssum\", \"playerjssum\": \"$playerjssum\", \"gamestatejssum\": \"$gamestatejssum\", \"rendererjssum\": \"$rendererjssum\", \"resourcesjssum\": \"$resourcesjssum\", \"utilsjssum\": \"$utilsjssum\", \"stylecsssum\": \"$stylecsssum\", \"powerupsjssum\": \"$powerupsjssum\"}"
+srijson="{\"gamejssum\": \"$gamejssum\", \"playerjssum\": \"$playerjssum\", \"gamestatejssum\": \"$gamestatejssum\", \"rendererjssum\": \"$rendererjssum\", \"resourcesjssum\": \"$resourcesjssum\", \"utilsjssum\": \"$utilsjssum\", \"stylecsssum\": \"$stylecsssum\", \"powerupsjssum\": \"$powerupsjssum\", \"linejssum\": \"$linejssum\"}"
 
 echo $srijson > /tmp/srihashes
 

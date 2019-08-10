@@ -74,6 +74,8 @@ class Renderer {
         for (var i = 0; i < objs.length; ++i) {
             // ignore deleted objects
             if (objs[i] === null) continue;
+            // ignore elements that don't need to be drawn
+            if (objs[i]["nodraw"]) continue;
             
             if (typeof objs[i].draw == 'function') { 
                 objs[i].draw(this.ctx, this);

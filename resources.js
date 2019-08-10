@@ -351,6 +351,5 @@ var Scenes = {
             "colour": "black",
             "oncollide": () => { }
         },
-        
     ]
 }

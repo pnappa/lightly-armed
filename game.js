@@ -86,7 +86,7 @@ function loadMaps() {
 
     function generateMap(fileName) {
         function parseMap(mapText) {
-            let builtMap = [];
+            let builtMap = {'tiles': [], 'segments': []};
             let rows = mapText.trim().split('\n');
             // 2d array of map (columns split on commas)
             let matrix = [];
@@ -128,10 +128,18 @@ function loadMaps() {
                         
                         // XXX: temp assign random colour to walls
                         cWall.colour = colToRgbaStr([Math.random()*255, Math.random()*255, Math.random()*255, 1]);
-                        builtMap.push(cWall);
+                        builtMap['tiles'].push(cWall);
                     }
                 });
             });
+
+            // iterate over again to build the line segment maps
+            matrix.forEach((row, rowNum) => {
+                row.forEach((col, colNum) => {
+                    // TODO:
+                });
+            });
+
             return builtMap;
         }
 
