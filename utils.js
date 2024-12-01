@@ -61,8 +61,7 @@ function isCollidable(obj) {
 }
 
 // find the point of intersection (returns undefined if not found, otherwise [xp, yp])
-function getSegmentIntersection(p0, p1
-                                p2, p3) {
+function getSegmentIntersection(p0, p1, p2, p3) {
     // TODO: based on the logic here
     //https://stackoverflow.com/a/565282/1129185
 }
